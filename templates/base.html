@@ -8,439 +8,43 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <style>
-    :root {
-      --app-bg-1: #e7edf5;
-      --app-bg-2: #dce5ef;
-      --app-surface-1: #edf3fa;
-      --app-surface-2: #e2ebf5;
-      --app-panel-bg: #f7fbff;
-      --app-text: #21313f;
-      --app-muted: #6c7a86;
-      --app-border: rgba(31, 122, 140, 0.24);
-      --app-shadow: rgba(16, 30, 54, 0.13);
-      --app-table-head: #5b6872;
-      --app-bottom-nav-height: 0px;
+    body, .card, .navbar, .modal-content {
+      color: #212529;
     }
-
-    [data-bs-theme="dark"] {
-      --app-bg-1: #0f141b;
-      --app-bg-2: #161f2a;
-      --app-surface-1: #182431;
-      --app-surface-2: #1e2c3d;
-      --app-panel-bg: #131c26;
-      --app-text: #eef4fa;
-      --app-muted: #b4c0cc;
-      --app-border: rgba(148, 182, 209, 0.26);
-      --app-shadow: rgba(0, 0, 0, 0.38);
-      --app-table-head: #c1cfdb;
+    .card, .modal-content {
+      border: 1.5px solid #b0b8be !important;
+      box-shadow: 0 0.5rem 1.2rem rgba(31,122,140,0.07);
     }
-
-    html {
-      min-height: 100%;
-      background: var(--app-bg-2);
+    .navbar {
+      border: 1.5px solid #b0b8be !important;
     }
-
-    body {
-      background: radial-gradient(circle at top right, #d8e9f8 0%, var(--app-bg-1) 40%, var(--app-bg-2) 100%);
-      background-color: var(--app-bg-1);
-      color: var(--app-text);
-      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
-      min-height: 100dvh;
+    .nav-link, .dropdown-item, .navbar-brand {
+      color: #1a232b !important;
     }
-
-    [data-bs-theme="dark"] body {
-      background: radial-gradient(circle at top right, #1f2938 0%, var(--app-bg-1) 40%, var(--app-bg-2) 100%);
-      background-color: var(--app-bg-1);
+    .nav-link.active, .dropdown-item.active, .navbar-brand.active {
+      color: #fff !important;
+      background: #1f7a8c !important;
     }
-
-    .navbar-brand {
-      letter-spacing: 0.03em;
-      font-weight: 700;
-      padding-top: 0;
-      padding-bottom: 0;
-      margin-right: 1rem;
-      margin-left: 0.35rem;
+    .text-muted, .text-secondary {
+      color: #6c757d !important;
     }
-
-    .brand-logo-shell {
-      height: 38px;
-      width: 84px;
-      display: flex;
-      align-items: center;
-      overflow: visible;
+    [data-bs-theme="dark"] body, [data-bs-theme="dark"] .card, [data-bs-theme="dark"] .navbar, [data-bs-theme="dark"] .modal-content {
+      color: #f8f9fa;
+      background-color: #181c22;
     }
-
-    .brand-logo {
-      height: 38px;
-      width: auto;
-      display: block;
-      transform: scale(0.86);
-      transform-origin: left center;
-      pointer-events: none;
+    [data-bs-theme="dark"] .card, [data-bs-theme="dark"] .modal-content, [data-bs-theme="dark"] .navbar {
+      border: 1.5px solid #3a4957 !important;
     }
-
-    .auth-logo {
-      height: 70px;
-      width: auto;
-      display: inline-block;
-    }
-
-    .app-utility {
-      background: linear-gradient(160deg, var(--app-surface-1) 0%, var(--app-surface-2) 100%);
-      border: 1px solid var(--app-border);
-      border-radius: 0.9rem;
-      padding: 0.5rem 0.75rem;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .app-center-nav {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .app-center-nav .app-nav-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.5rem 0.8rem;
-      border-radius: 0.7rem;
-      text-decoration: none;
-      color: var(--app-text);
-      font-weight: 600;
-    }
-
-    .app-center-nav .app-nav-link:hover {
-      background: rgba(31, 122, 140, 0.12);
-    }
-
-    .app-center-nav .app-nav-link.active {
-      background: #1f7a8c;
-      color: #ffffff;
-    }
-
-    .app-utility-right {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.35rem;
-      gap: 0.5rem;
-    }
-
-    .app-main-content {
-      padding-bottom: 1rem;
-      min-height: 100vh;
-    }
-
-    .app-main-content .app-panel {
-      min-height: auto;
-    }
-
-    @media (min-width: 992px) {
-      .app-main-content {
-        padding-bottom: 1.5rem;
-      }
-
-      .app-main-content .app-panel {
-        min-height: calc(100vh - 11.5rem);
-      }
-    }
-
-    .app-bottom-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1030;
-      background: var(--app-panel-bg);
-      border-top: 1px solid var(--app-border);
-      padding: 0.4rem 0.75rem calc(0.4rem + env(safe-area-inset-bottom));
-    }
-
-    .app-bottom-nav-inner {
-      max-width: 560px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.45rem;
-    }
-
-    .app-bottom-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.15rem;
-      border-radius: 0.7rem;
-      padding: 0.45rem 0.3rem;
-      text-decoration: none;
-      color: var(--app-text);
-      font-size: 0.78rem;
-      font-weight: 600;
-    }
-
-    .app-bottom-link i {
-      font-size: 1rem;
-      line-height: 1;
-    }
-
-    .app-bottom-link.active {
-      background: #1f7a8c;
-      color: #ffffff;
-    }
-
-    .app-panel {
-      background-color: var(--app-panel-bg);
-      border: 1px solid var(--app-border);
-      border-radius: 1rem;
-      box-shadow: 0 0.75rem 1.8rem var(--app-shadow);
-    }
-
-    .page-title {
-      font-weight: 700;
-      margin-bottom: 0.35rem;
-    }
-
-    .page-subtitle {
-      color: var(--app-muted);
-      margin-bottom: 1.25rem;
-    }
-
-    .surface-soft {
-      background: linear-gradient(160deg, var(--app-surface-1) 0%, var(--app-surface-2) 100%);
-      border: 1px solid var(--app-border);
-      border-radius: 0.85rem;
-    }
-
-    .btn-primary,
-    .btn-success,
-    .btn-outline-primary {
-      font-weight: 600;
-    }
-
-    .table thead th {
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      font-size: 0.76rem;
-      color: var(--app-table-head);
-      border-bottom-width: 1px;
-    }
-
-    .table,
-    .table > :not(caption) > * > * {
-      color: var(--app-text);
-      border-color: var(--app-border);
-    }
-
-    .bg-white {
-      background-color: var(--app-panel-bg) !important;
-      color: var(--app-text) !important;
-    }
-
-    .form-label {
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-    }
-
-    .form-control,
-    .form-select {
-      background-color: var(--app-panel-bg);
-      color: var(--app-text);
-      border-color: var(--app-border);
-    }
-
-    .form-control::placeholder {
-      color: var(--app-muted);
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-      background-color: var(--app-panel-bg);
-      color: var(--app-text);
-      border-color: #1f7a8c;
-      box-shadow: 0 0 0 0.2rem rgba(31, 122, 140, 0.2);
-    }
-
-    .list-group-item {
-      border-color: var(--app-border);
-    }
-
-    .auth-shell {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-top: 1rem !important;
-      padding-bottom: 1rem !important;
-      position: relative;
-      isolation: isolate;
-    }
-
-    .auth-shell.auth-shell {
-      margin-bottom: 0;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 450px;
-      background-color: var(--app-panel-bg);
-      border-radius: 1rem;
-      border: 1px solid var(--app-border);
-      box-shadow: 0 1rem 2rem var(--app-shadow);
-      position: relative;
-      z-index: 20;
-      pointer-events: auto;
-    }
-
-    .auth-card .btn,
-    .auth-card button,
-    .auth-card a {
-      position: relative;
-      z-index: 21;
-    }
-
-    .auth-card form,
-    .auth-card input,
-    .auth-card label {
-      position: relative;
-      z-index: 21;
-    }
-
-    .theme-toggle-icon {
-      width: 1rem;
-      height: 1rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .no-caret::after {
-      display: none;
-    }
-
-    .text-secondary {
-      color: var(--app-muted) !important;
-    }
-
-    .table-hover > tbody > tr:hover > * {
-      background-color: rgba(31, 122, 140, 0.08);
-      color: var(--app-text);
-    }
-
-    [data-bs-theme="dark"] .table-hover > tbody > tr:hover > * {
-      background-color: rgba(130, 211, 227, 0.12);
-      color: var(--app-text);
-    }
-
-    [data-bs-theme="dark"] .btn-light {
-      background-color: #1d2a38;
-      border-color: var(--app-border);
-      color: var(--app-text);
-    }
-
-    [data-bs-theme="dark"] .btn-light:hover,
-    [data-bs-theme="dark"] .btn-light:focus {
-      background-color: #253548;
-      border-color: #5a738c;
-      color: #ffffff;
-    }
-
-    [data-bs-theme="dark"] .btn-outline-secondary {
-      color: #d0dbe7;
-      border-color: #6d8196;
-    }
-
-    [data-bs-theme="dark"] .btn-outline-secondary:hover,
-    [data-bs-theme="dark"] .btn-outline-secondary:focus {
-      background-color: #6d8196;
-      border-color: #6d8196;
-      color: #0f141b;
-    }
-
-    [data-bs-theme="dark"] .alert-light {
-      background-color: #1b2735;
-      color: var(--app-text);
-      border-color: var(--app-border);
-    }
-
-    [data-bs-theme="dark"] .badge.text-bg-light {
-      background-color: #32465b !important;
+    [data-bs-theme="dark"] .nav-link, [data-bs-theme="dark"] .dropdown-item, [data-bs-theme="dark"] .navbar-brand {
       color: #e9f2fb !important;
     }
-
-    @media (max-width: 576px) {
-      main.container {
-        padding-left: 0.85rem;
-        padding-right: 0.85rem;
-      }
-
-      .auth-shell {
-        display: block;
-        min-height: auto;
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
-      }
-
-      .auth-card {
-        max-width: none;
-        width: 100%;
-        margin: 0 auto;
-      }
-
-      .auth-card .btn,
-      .auth-card button {
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .brand-logo-shell {
-        height: 34px;
-        width: 74px;
-      }
-
-      .brand-logo {
-        height: 34px;
-        transform: scale(0.82);
-      }
-
-      .auth-logo {
-        height: 58px;
-      }
-
-      .app-utility {
-        grid-template-columns: 1fr auto;
-      }
-
-      .app-center-nav {
-        display: none;
-      }
-
-      .app-panel .card-body {
-        padding: 1rem;
-      }
+    [data-bs-theme="dark"] .nav-link.active, [data-bs-theme="dark"] .dropdown-item.active, [data-bs-theme="dark"] .navbar-brand.active {
+      color: #fff !important;
+      background: #1f7a8c !important;
     }
-
-    @media (max-width: 991.98px) {
-      .app-main-content .app-panel {
-        margin-bottom: calc(var(--app-bottom-nav-height) + 1rem);
-      }
+    [data-bs-theme="dark"] .text-muted, [data-bs-theme="dark"] .text-secondary {
+      color: #b4c0cc !important;
     }
-
-    @media (min-width: 768px) and (max-width: 991.98px) {
-      .app-bottom-nav-inner {
-        max-width: 760px;
-        gap: 0.7rem;
-      }
-
-      .app-bottom-link {
-        font-size: 0.82rem;
-        padding: 0.5rem 0.4rem;
-      }
-    }
-
   </style>
   <script>
     (function () {
@@ -452,62 +56,57 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
-  <main class="container py-4 py-md-5{% if auth_page %} auth-shell{% else %} app-main-content{% endif %}">
+  <main class="container py-4 py-md-5{% if auth_page %} d-flex align-items-center justify-content-center min-vh-100{% endif %}">
     {% if auth_page %}
-      <div class="auth-card p-4 p-md-5" style="max-width: {{ auth_max_width|default:'450px' }};">
+      <div class="card p-4 p-md-5 mx-auto" style="max-width: {{ auth_max_width|default:'450px' }};">
         <div class="text-center mb-4">
-          <img src="{% static 'img/Logo.png' %}" alt="CaFit" class="auth-logo">
+          <img src="{% static 'img/Logo.png' %}" alt="CaFit" style="height:70px;">
         </div>
     {% else %}
-      <div class="app-utility d-flex justify-content-between align-items-center gap-2 mb-3">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">
-          <span class="brand-logo-shell">
-            <img src="{% static 'img/Logo.png' %}" alt="CaFit" class="brand-logo">
-          </span>
-        </a>
-
-        {% if request.user.is_authenticated %}
-          <nav class="app-center-nav d-none d-lg-flex" aria-label="Navegacion principal escritorio">
-            <a href="{% url 'alimentos' %}" class="app-nav-link{% if request.resolver_match.url_name == 'alimentos' %} active{% endif %}">Alimentos<i class="bi bi-egg-fried"></i></a>
-            <a href="{% url 'dashboard' %}" class="app-nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}">Dashboard<i class="bi bi-speedometer2"></i></a>
-            <a href="{% url 'chat' %}" class="app-nav-link{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active{% endif %}">Chat<i class="bi bi-chat-dots"></i></a>
-          </nav>
-        {% endif %}
-
-        {% if request.user.is_authenticated %}
-          <div class="app-utility-right">
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Abrir menu de usuario">
-                <i class="bi bi-person-circle"></i>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><span class="dropdown-item-text small fw-semibold">{{ request.user.username }}</span></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="{% url 'estadisticas' %}"><i class="bi bi-bar-chart"></i> Estadísticas</a></li>
-                <li><a class="dropdown-item" href="{% url 'perfil' %}"><i class="bi bi-person"></i> Editar perfil</a></li>
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#reportarProblemaModal">
-                  <i class="bi bi-exclamation-circle"></i> Informar un problema
-                </a></li>
-                {% if request.user.is_staff %}
-                  <li><a class="dropdown-item" href="{% url 'panel_admin' %}"><i class="bi bi-gear"></i> Panel admin</a></li>
-                {% endif %}
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <form method="post" action="{% url 'cerrar_sesion' %}" class="m-0">
-                    {% csrf_token %}
-                    <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
-                  </form>
-                </li>
+      <nav class="navbar navbar-expand-lg bg-body-tertiary rounded mb-3">
+        <div class="container-fluid">
+          <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
+            <img src="{% static 'img/Logo.png' %}" alt="CaFit" style="height:38px;">
+          </a>
+          {% if request.user.is_authenticated %}
+            <div class="collapse navbar-collapse">
+              <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a href="{% url 'alimentos' %}" class="nav-link{% if request.resolver_match.url_name == 'alimentos' %} active{% endif %}">Alimentos <i class="bi bi-egg-fried"></i></a></li>
+                <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}">Dashboard <i class="bi bi-speedometer2"></i></a></li>
+                <li class="nav-item"><a href="{% url 'chat' %}" class="nav-link{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active{% endif %}">Chat <i class="bi bi-chat-dots"></i></a></li>
               </ul>
+              <div class="d-flex align-items-center gap-2">
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Abrir menu de usuario">
+                    <i class="bi bi-person-circle"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text small fw-semibold">{{ request.user.username }}</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'estadisticas' %}"><i class="bi bi-bar-chart"></i> Estadísticas</a></li>
+                    <li><a class="dropdown-item" href="{% url 'perfil' %}"><i class="bi bi-person"></i> Editar perfil</a></li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#reportarProblemaModal"><i class="bi bi-exclamation-circle"></i> Informar un problema</a></li>
+                    {% if request.user.is_staff %}
+                      <li><a class="dropdown-item" href="{% url 'panel_admin' %}"><i class="bi bi-gear"></i> Panel admin</a></li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                      <form method="post" action="{% url 'cerrar_sesion' %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
+                <button type="button" id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" aria-label="Cambiar tema">
+                  <i id="themeToggleIcon" class="bi bi-moon-stars-fill"></i>
+                </button>
+              </div>
             </div>
-            <button type="button" id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" aria-label="Cambiar tema">
-              <i id="themeToggleIcon" class="bi bi-moon-stars-fill theme-toggle-icon" aria-hidden="true"></i>
-            </button>
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="card app-panel">
+          {% endif %}
+        </div>
+      </nav>
+      <div class="card shadow-sm mb-4">
         <div class="card-body">
     {% endif %}
 
@@ -527,17 +126,16 @@
         </div>
       </div>
       {% if request.user.is_authenticated %}
-        <nav class="app-bottom-nav d-lg-none" aria-label="Navegacion principal">
-          <div class="app-bottom-nav-inner">
-            <a href="{% url 'alimentos' %}" class="app-bottom-link{% if request.resolver_match.url_name == 'alimentos' %} active{% endif %}"><i class="bi bi-egg-fried"></i><span>Alimentos</span></a>
-            <a href="{% url 'dashboard' %}" class="app-bottom-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
-            <a href="{% url 'chat' %}" class="app-bottom-link{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active{% endif %}"><i class="bi bi-chat-dots"></i><span>Chat</span></a>
+        <nav class="navbar fixed-bottom bg-body-tertiary d-lg-none border-top">
+          <div class="container d-flex justify-content-around">
+            <a href="{% url 'alimentos' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'alimentos' %} active fw-bold text-primary{% endif %}"><i class="bi bi-egg-fried"></i><div style="font-size:0.8rem;">Alimentos</div></a>
+            <a href="{% url 'dashboard' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'dashboard' %} active fw-bold text-primary{% endif %}"><i class="bi bi-speedometer2"></i><div style="font-size:0.8rem;">Dashboard</div></a>
+            <a href="{% url 'chat' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active fw-bold text-primary{% endif %}"><i class="bi bi-chat-dots"></i><div style="font-size:0.8rem;">Chat</div></a>
           </div>
         </nav>
       {% endif %}
     {% endif %}
   </main>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     (function () {
@@ -545,47 +143,26 @@
       const root = document.documentElement;
       const button = document.getElementById("themeToggleBtn");
       const icon = document.getElementById("themeToggleIcon");
-      if (!button) {
-        return;
-      }
-
+      if (!button) return;
       function getCurrentTheme() {
         const current = root.getAttribute("data-bs-theme");
         return current === "dark" ? "dark" : "light";
       }
-
       function syncThemeUI(theme) {
-        if (!icon) {
-          return;
-        }
-        icon.className = theme === "dark" ? "bi bi-sun-fill theme-toggle-icon" : "bi bi-moon-stars-fill theme-toggle-icon";
+        if (!icon) return;
+        icon.className = theme === "dark" ? "bi bi-sun-fill" : "bi bi-moon-stars-fill";
         button.setAttribute("title", theme === "dark" ? "Cambiar a claro" : "Cambiar a oscuro");
         button.setAttribute("aria-label", theme === "dark" ? "Cambiar a claro" : "Cambiar a oscuro");
       }
-
       syncThemeUI(getCurrentTheme());
-
       button.addEventListener("click", function () {
         const nextTheme = getCurrentTheme() === "dark" ? "light" : "dark";
         root.setAttribute("data-bs-theme", nextTheme);
         localStorage.setItem(key, nextTheme);
         syncThemeUI(nextTheme);
       });
-
-      const bottomNav = document.querySelector(".app-bottom-nav");
-      function syncBottomNavHeight() {
-        if (!bottomNav) {
-          root.style.setProperty("--app-bottom-nav-height", "0px");
-          return;
-        }
-        root.style.setProperty("--app-bottom-nav-height", bottomNav.offsetHeight + "px");
-      }
-
-      syncBottomNavHeight();
-      window.addEventListener("resize", syncBottomNavHeight);
     })();
   </script>
-
   {% if request.user.is_authenticated %}
     <!-- Modal para reportar problema -->
     <div class="modal fade" id="reportarProblemaModal" tabindex="-1">

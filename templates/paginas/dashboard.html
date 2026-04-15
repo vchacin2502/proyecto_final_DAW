@@ -23,7 +23,7 @@
       height: 10px;
       border-radius: 999px;
       overflow: hidden;
-      background: var(--dashboard-track);
+      background: #eceef2;
     }
 
     .macro-progress .macro-fill {
@@ -35,91 +35,25 @@
       animation: progressGrow 900ms ease both;
     }
 
-    .progress-orange {
-      background-color: #f08a24 !important;
-    }
+    .progress-orange { background-color: #f08a24 !important; }
+    @keyframes progressGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-    @keyframes progressGrow {
-      from {
-        transform: scaleX(0);
-      }
-      to {
-        transform: scaleX(1);
-      }
-    }
-
-    .kcal-hero {
-      background: linear-gradient(140deg, var(--dashboard-hero-1) 0%, var(--dashboard-hero-2) 100%);
-      border: 1px solid var(--dashboard-hero-border);
-    }
-
-    .kcal-remaining {
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .meal-summary-card {
-      width: 100%;
-      border: 1px solid var(--app-border);
+    .kcal-hero, .surface-soft, .meals-panel, .meal-summary-card {
+      border: 1.5px solid #b0b8be !important;
       border-radius: 0.8rem;
-      background: linear-gradient(160deg, var(--app-surface-1) 0%, var(--app-surface-2) 100%);
-      color: inherit;
-      text-align: left;
-      padding: 1.25rem 1.2rem;
-      min-height: 5.25rem;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
-      position: relative;
+      background: #f8fafc;
+      box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
     }
 
-    .meal-summary-card:hover,
-    .meal-summary-card:focus-visible {
-      transform: translateY(-1px);
-      border-color: var(--app-muted);
-      box-shadow: 0 0.7rem 1.2rem rgba(16, 30, 54, 0.08);
-      outline: none;
-      z-index: 2;
-    }
-
-    [data-bs-theme="dark"] .meal-summary-card:hover,
-    [data-bs-theme="dark"] .meal-summary-card:focus-visible {
-      box-shadow: 0 0.7rem 1.2rem rgba(0, 0, 0, 0.28);
-    }
-
-    .meals-panel {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .meals-list {
-      flex: 1 1 auto;
-      overflow: auto;
-      padding: 0.35rem 0.15rem 0 0;
-    }
-
-    .meal-summary-card .fw-semibold {
-      font-size: 1.05rem;
-    }
-
-    .meal-summary-card .small {
-      font-size: 0.88rem;
-    }
-
-    .meal-summary-card .badge {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.65rem;
-    }
-
-    .meal-modal-table th,
-    .meal-modal-table td {
-      white-space: nowrap;
+    [data-bs-theme="dark"] .kcal-hero, [data-bs-theme="dark"] .surface-soft, [data-bs-theme="dark"] .meals-panel, [data-bs-theme="dark"] .meal-summary-card {
+      border: 1.5px solid #3a4957 !important;
+      background: #232b36;
     }
   </style>
 
   <div class="row g-4 mb-4 align-items-stretch">
     <div class="col-12 col-xl-7 d-flex flex-column gap-4">
-      <div class="surface-soft kcal-hero p-3 p-md-4">
+      <div class="kcal-hero p-3 p-md-4 mb-2">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
           <div>
             <p class="small text-secondary mb-1">Progreso calorico de hoy</p>
@@ -146,7 +80,7 @@
 
       </div>
 
-      <div class="surface-soft p-3 p-md-4">
+      <div class="surface-soft p-3 p-md-4 mb-2">
         <h2 class="h5 mb-3">Macros de hoy</h2>
         <div class="vstack gap-3">
           <div>
@@ -187,7 +121,7 @@
     </div>
 
     <div class="col-12 col-xl-5">
-      <div class="surface-soft p-3 p-md-4 meals-panel">
+      <div class="meals-panel p-3 p-md-4">
         <h2 class="h5 mb-3">Comidas de hoy</h2>
         {% if historial_comidas %}
           <div class="meals-list vstack gap-2">

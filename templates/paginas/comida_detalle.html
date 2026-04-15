@@ -18,6 +18,19 @@
       max-width: 420px;
     }
 
+    .resumen-macros-box {
+      border: 1.5px solid #b0b8be !important;
+      border-radius: 0.7rem;
+      background: #fff;
+      color: #212529;
+    }
+
+    [data-bs-theme="dark"] .resumen-macros-box {
+      border: 1.5px solid #3a4957 !important;
+      background: #232b36;
+      color: #e9f2fb;
+    }
+
     @media (max-width: 576px) {
       .catalogo-toolbar {
         flex-direction: column;
@@ -181,14 +194,12 @@
           <ul id="resumenLista" class="list-group list-group-flush rounded mb-3 resumen-lista">
             <li class="list-group-item small text-secondary">Aun no has seleccionado alimentos.</li>
           </ul>
-
-          <div class="border rounded p-2 mb-3 bg-white small">
+          <div class="resumen-macros-box p-2 mb-3 small">
             <div class="d-flex justify-content-between"><span>Kcal</span><strong id="resumenKcal">0</strong></div>
             <div class="d-flex justify-content-between"><span>Proteinas</span><strong id="resumenProteinas">0 g</strong></div>
             <div class="d-flex justify-content-between"><span>Carbohidratos</span><strong id="resumenCarbohidratos">0 g</strong></div>
             <div class="d-flex justify-content-between"><span>Grasas</span><strong id="resumenGrasas">0 g</strong></div>
           </div>
-
           <button type="submit" class="btn btn-success w-100 mb-2">{% if modo_edicion %}Actualizar comida{% else %}Terminar comida{% endif %}</button>
           {% if not modo_edicion %}
             <a href="{% url 'agregar_comida_inicio' %}" class="btn btn-outline-secondary w-100">Cambiar tipo de comida</a>

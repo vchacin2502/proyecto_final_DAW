@@ -29,6 +29,8 @@
       transition: transform 0.2s, box-shadow 0.2s;
       display: block;
       height: 100%;
+      border: 1.5px solid #b0b8be !important;
+      box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
     }
     
     .stat-card:hover {
@@ -52,18 +54,26 @@
     }
     
     .module-card {
+      border: 1.5px solid #b0b8be !important;
+      border-radius: 0.75rem;
+      box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
       transition: all 0.2s ease;
-      border: 2px solid transparent;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       height: 100%;
+      background: #f8fafc;
     }
     
     .module-card:hover {
       border-color: var(--bs-primary);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    [data-bs-theme="dark"] .stat-card, [data-bs-theme="dark"] .module-card {
+      border: 1.5px solid #3a4957 !important;
+      background: #232b36;
+      color: #e9f2fb;
     }
     
     .module-icon {
@@ -163,7 +173,7 @@
     <!-- Incidencias -->
     <div class="col-12 col-lg-6">
       <a href="{% url 'admin_incidencias' %}" class="text-decoration-none">
-        <div class="surface-soft p-4 module-card">
+        <div class="module-card p-4">
           <div class="module-icon">
             <i class="bi bi-exclamation-triangle-fill"></i>
           </div>
@@ -173,11 +183,10 @@
         </div>
       </a>
     </div>
-
     <!-- Chat -->
     <div class="col-12 col-lg-6">
       <a href="{% url 'admin_chat' %}" class="text-decoration-none">
-        <div class="surface-soft p-4 module-card">
+        <div class="module-card p-4">
           <div class="module-icon">
             <i class="bi bi-chat-dots"></i>
           </div>
