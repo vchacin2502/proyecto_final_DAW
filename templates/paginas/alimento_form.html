@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titulo %}Alimento{% endblock %}
+{% block contenido %}
+  <h1 class="h4 mb-3">{{ alimento.nombre|default:'Nuevo alimento' }}</h1>
+  <form method="post" class="row g-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a href="{% url 'alimentos_list' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

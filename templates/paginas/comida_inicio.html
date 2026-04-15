@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block titulo %}Agregar comida{% endblock %}
+
+{% block contenido %}
+  <style>
+    :root {
+      --meal-option-border: rgba(31, 122, 140, 0.18);
+      --meal-option-bg-1: #f9fcff;
+      --meal-option-bg-2: #f0f7fa;
+      --meal-option-hover-border: #1f7a8c;
+      --meal-option-shadow: rgba(16, 30, 54, 0.08);
+    }
+
+    [data-bs-theme="dark"] {
+      --meal-option-border: rgba(148, 182, 209, 0.35);
+      --meal-option-bg-1: #1a2735;
+      --meal-option-bg-2: #223346;
+      --meal-option-hover-border: #82d3e3;
+      --meal-option-shadow: rgba(0, 0, 0, 0.34);
+    }
+
+    .meal-option {
+      border: 1px solid var(--meal-option-border);
+      border-radius: 0.85rem;
+      background: linear-gradient(160deg, var(--meal-option-bg-1) 0%, var(--meal-option-bg-2) 100%);
+      color: inherit;
+      width: 100%;
+      padding: 1rem;
+      text-align: left;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    }
+
+    .meal-option:hover,
+    .meal-option:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--meal-option-hover-border);
+      box-shadow: 0 0.5rem 1rem var(--meal-option-shadow);
+      outline: none;
+    }
+
+    #meal-container {
+      height: fit-content;
+    }
+  </style>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-3">
+    <div>
+      <h1 class="page-title h3 mb-1">Agregar comida</h1>
+      <p class="page-subtitle mb-0">Primero elige el bloque en el que vas a registrar alimentos.</p>
+    </div>
+  </div>
+
+  <div class="row g-3" id="meal-container">
+    {% for value, label in tipos_comida %}
+      <div class="col-12 col-md-6">
+        <form method="post" action="{% url 'agregar_comida_inicio' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_comida" value="{{ value }}">
+          <button type="submit" class="meal-option">
+            <div>
+              <h2 class="h5 mb-1">{{ label }}</h2>
+              {% if value == 'desayuno' %}
+                <p class="mb-0 text-secondary small">Empieza el día con energía y un buen equilibrio.</p>
+              {% elif value == 'almuerzo' %}
+                <p class="mb-0 text-secondary small">Registra tu comida principal con todos sus detalles.</p>
+              {% elif value == 'cena' %}
+                <p class="mb-0 text-secondary small">Anota una cena ligera y completa para terminar el día.</p>
+              {% elif value == 'snacks' %}
+                <p class="mb-0 text-secondary small">Guarda esos picoteos o tentempiés entre comidas.</p>
+              {% endif %}
+            </div>
+          </button>
+        </form>
+      </div>
+    {% endfor %}
+
+  </div>
+{% endblock %}

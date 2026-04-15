@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block titulo %}Chat{% endblock %}
+
+{% block contenido %}
+  <style>
+    .chat-room-card {
+      background: var(--app-panel-bg);
+      border: 1px solid var(--app-border);
+      border-radius: 0.95rem;
+      box-shadow: 0 0.55rem 1.2rem var(--app-shadow);
+      color: var(--app-text);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    .chat-room-card:hover,
+    .chat-room-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 0.75rem 1.5rem var(--app-shadow);
+      border-color: rgba(31, 122, 140, 0.42);
+      outline: none;
+    }
+
+    [data-bs-theme="dark"] .chat-room-card:hover,
+    [data-bs-theme="dark"] .chat-room-card:focus-visible {
+      box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.35);
+      border-color: rgba(130, 211, 227, 0.45);
+    }
+
+    .chat-room-card .text-secondary {
+      color: var(--app-muted) !important;
+    }
+  </style>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+    <div>
+      <h1 class="page-title h3 mb-1">Sala de chats</h1>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    {% for sala in salas %}
+      <div class="col-12 col-md-6">
+        <a href="{% url 'chat_sala' sala.slug %}" class="chat-room-card p-3 p-md-4 d-block text-decoration-none h-100">
+          <div class="mb-2">
+            <h2 class="h5 mb-0">{{ sala.nombre }}</h2>
+          </div>
+          <p class="small text-secondary mb-0">{{ sala.descripcion }}</p>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="surface-soft p-3 p-md-4">
+    <h2 class="h6 text-uppercase text-secondary mb-3">Normas de comunidad</h2>
+    <ul class="mb-0 ps-3 small">
+      <li>Respeta a otros usuarios.</li>
+      <li>Evita publicar datos personales.</li>
+      <li>Reporta mensajes ofensivos al admin.</li>
+      <li>Evita spam, publicidad y enlaces engañosos.</li>
+      <li>Mantén cada mensaje dentro del tema de su sala.</li>
+    </ul>
+  </div>
+{% endblock %}

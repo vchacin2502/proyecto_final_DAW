@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# VSCode
+.vscode/
+
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+
+# Docker
+*.pid
+*.seed
+docker-compose.override.yml
+certbot/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Otros
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Archivos de configuración personales
+*.env
+.env.*
