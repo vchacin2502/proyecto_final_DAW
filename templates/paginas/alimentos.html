@@ -236,24 +236,24 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll('.btn-editar-alimento').forEach(function(btn) {
-    btn.addEventListener('click', function() {
+  document.querySelectorAll('.btn-editar-alimento').forEach(function(boton) {
+    boton.addEventListener('click', function() {
       const id = this.getAttribute('data-id');
       fetch(`/alimentos/${id}/detalle/`, {headers: {'x-requested-with': 'XMLHttpRequest'}})
-        .then(r => r.json())
-        .then(data => {
+        .then(respuesta => respuesta.json())
+        .then(datos => {
           document.getElementById('formEditarAlimento').action = `/alimentos/${id}/editar/`;
-          document.getElementById('editar_id').value = data.id;
-          document.getElementById('editar_nombre').value = data.nombre;
-          document.getElementById('editar_marca').value = data.marca;
-          document.getElementById('editar_unidad').value = data.unidad;
-          document.getElementById('editar_cantidad_referencia').value = data.cantidad_referencia;
-          document.getElementById('editar_kcal').value = data.kcal;
-          document.getElementById('editar_proteinas').value = data.proteinas;
-          document.getElementById('editar_carbohidratos').value = data.carbohidratos;
-          document.getElementById('editar_azucares').value = data.azucares;
-          document.getElementById('editar_grasas').value = data.grasas;
-          document.getElementById('editar_saturadas').value = data.saturadas;
+          document.getElementById('editar_id').value = datos.id;
+          document.getElementById('editar_nombre').value = datos.nombre;
+          document.getElementById('editar_marca').value = datos.marca;
+          document.getElementById('editar_unidad').value = datos.unidad;
+          document.getElementById('editar_cantidad_referencia').value = datos.cantidad_referencia;
+          document.getElementById('editar_kcal').value = datos.kcal;
+          document.getElementById('editar_proteinas').value = datos.proteinas;
+          document.getElementById('editar_carbohidratos').value = datos.carbohidratos;
+          document.getElementById('editar_azucares').value = datos.azucares;
+          document.getElementById('editar_grasas').value = datos.grasas;
+          document.getElementById('editar_saturadas').value = datos.saturadas;
           var modal = new bootstrap.Modal(document.getElementById('editarAlimentoModal'));
           modal.show();
         });

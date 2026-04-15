@@ -171,11 +171,11 @@
 
   <script>
     (function () {
-      const buscador = document.getElementById("busquedaUsuarios");
-      const filas = Array.from(document.querySelectorAll(".usuario-row[data-busqueda]"));
-      const filaVacia = document.querySelector(".usuarios-vacio");
+      const buscadorUsuarios = document.getElementById("busquedaUsuarios");
+      const filasUsuarios = Array.from(document.querySelectorAll(".usuario-row[data-busqueda]"));
+      const filaSinUsuarios = document.querySelector(".usuarios-vacio");
 
-      function normalizar(texto) {
+      function normalizarTexto(texto) {
         return (texto || "")
           .toString()
           .toLowerCase()
@@ -183,26 +183,26 @@
           .replace(/[\u0300-\u036f]/g, "");
       }
 
-      function filtrarUsuarios() {
-        const termino = normalizar(buscador.value.trim());
+      function filtrarListaUsuarios() {
+        const termino = normalizarTexto(buscadorUsuarios.value.trim());
         let visibles = 0;
 
-        filas.forEach(function (fila) {
-          const texto = normalizar(fila.dataset.busqueda || "");
+        filasUsuarios.forEach(function (fila) {
+          const texto = normalizarTexto(fila.dataset.busqueda || "");
           const mostrar = texto.indexOf(termino) !== -1;
           fila.style.display = mostrar ? "" : "none";
           if (mostrar) visibles += 1;
         });
 
-        if (filaVacia) {
-          filaVacia.style.display = visibles === 0 ? "" : "none";
+        if (filaSinUsuarios) {
+          filaSinUsuarios.style.display = visibles === 0 ? "" : "none";
         }
       }
 
-      if (buscador) {
-        buscador.addEventListener("input", filtrarUsuarios);
-        buscador.addEventListener("change", filtrarUsuarios);
-        filtrarUsuarios();
+      if (buscadorUsuarios) {
+        buscadorUsuarios.addEventListener("input", filtrarListaUsuarios);
+        buscadorUsuarios.addEventListener("change", filtrarListaUsuarios);
+        filtrarListaUsuarios();
       }
     })();
   </script>

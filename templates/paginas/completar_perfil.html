@@ -84,82 +84,82 @@
 
   <script>
     (function () {
-      const edad = document.getElementById('edad');
-      const altura = document.getElementById('altura');
-      const peso = document.getElementById('peso');
-      const sexo = document.getElementById('sexo');
-      const objetivo = document.getElementById('objetivo');
-      const hiddenCalorias = document.getElementById('meta_calorias');
-      const caloriasPreview = document.getElementById('caloriasPreview');
-      const proteinasPreview = document.getElementById('proteinasPreview');
-      const grasasPreview = document.getElementById('grasasPreview');
-      const carbohidratosPreview = document.getElementById('carbohidratosPreview');
+      const campoEdad = document.getElementById('edad');
+      const campoAltura = document.getElementById('altura');
+      const campoPeso = document.getElementById('peso');
+      const campoSexo = document.getElementById('sexo');
+      const campoObjetivo = document.getElementById('objetivo');
+      const campoCaloriasOculto = document.getElementById('meta_calorias');
+      const caloriasVista = document.getElementById('caloriasPreview');
+      const proteinasVista = document.getElementById('proteinasPreview');
+      const grasasVista = document.getElementById('grasasPreview');
+      const carbohidratosVista = document.getElementById('carbohidratosPreview');
 
-      function toNumber(value) {
-        const parsed = parseFloat(String(value).replace(',', '.'));
-        return Number.isFinite(parsed) ? parsed : 0;
+      function aNumero(valor) {
+        const convertido = parseFloat(String(valor).replace(',', '.'));
+        return Number.isFinite(convertido) ? convertido : 0;
       }
 
-      function calculateCalories() {
-        const age = toNumber(edad.value);
-        const height = toNumber(altura.value);
-        const weight = toNumber(peso.value);
+      function calcularCalorias() {
+        const edad = aNumero(campoEdad.value);
+        const altura = aNumero(campoAltura.value);
+        const peso = aNumero(campoPeso.value);
 
-        if (!age || !height || !weight) {
-          hiddenCalorias.value = '';
-          caloriasPreview.textContent = '0';
-          proteinasPreview.textContent = '0';
-          grasasPreview.textContent = '0';
-          carbohidratosPreview.textContent = '0';
+        if (!edad || !altura || !peso) {
+          campoCaloriasOculto.value = '';
+          caloriasVista.textContent = '0';
+          proteinasVista.textContent = '0';
+          grasasVista.textContent = '0';
+          carbohidratosVista.textContent = '0';
           return;
         }
 
-        let basal = (10 * weight) + (6.25 * height) - (5 * age);
-        if (sexo.value === 'mujer') {
+        let basal = (10 * peso) + (6.25 * altura) - (5 * edad);
+        if (campoSexo.value === 'mujer') {
           basal -= 161;
         } else {
           basal += 5;
         }
 
-        let maintenance = basal * 1.4;
-        if (objetivo.value === 'bajar_peso') {
-          maintenance -= 400;
-        } else if (objetivo.value === 'ganar_peso') {
-          maintenance += 300;
+        let mantenimiento = basal * 1.4;
+        if (campoObjetivo.value === 'bajar_peso') {
+          mantenimiento -= 400;
+        } else if (campoObjetivo.value === 'ganar_peso') {
+          mantenimiento += 300;
         }
 
-        const calories = Math.max(Math.round(maintenance), 1200);
+        const calorias = Math.max(Math.round(mantenimiento), 1200);
 
         let ratioProte = 0.30;
         let ratioGrasas = 0.30;
         let ratioCarbs = 0.40;
-        if (objetivo.value === 'bajar_peso') {
+        if (campoObjetivo.value === 'bajar_peso') {
           ratioProte = 0.35;
           ratioGrasas = 0.30;
           ratioCarbs = 0.35;
-        } else if (objetivo.value === 'ganar_peso') {
+        } else if (campoObjetivo.value === 'ganar_peso') {
           ratioProte = 0.30;
           ratioGrasas = 0.25;
           ratioCarbs = 0.45;
         }
 
-        const proteinas = Math.round((calories * ratioProte) / 4);
-        const grasas = Math.round((calories * ratioGrasas) / 9);
-        const carbohidratos = Math.round((calories * ratioCarbs) / 4);
+        const proteinas = Math.round((calorias * ratioProte) / 4);
+        const grasas = Math.round((calorias * ratioGrasas) / 9);
+        const carbohidratos = Math.round((calorias * ratioCarbs) / 4);
 
-        hiddenCalorias.value = calories;
-        caloriasPreview.textContent = calories;
-        proteinasPreview.textContent = proteinas;
-        grasasPreview.textContent = grasas;
-        carbohidratosPreview.textContent = carbohidratos;
+        campoCaloriasOculto.value = calorias;
+        caloriasVista.textContent = calorias;
+        proteinasVista.textContent = proteinas;
+        grasasVista.textContent = grasas;
+        carbohidratosVista.textContent = carbohidratos;
       }
 
-      [edad, altura, peso, sexo, objetivo].forEach((field) => {
-        field.addEventListener('input', calculateCalories);
-        field.addEventListener('change', calculateCalories);
+      [campoEdad, campoAltura, campoPeso, campoSexo, campoObjetivo].forEach((campo) => {
+        campo.addEventListener('input', calcularCalorias);
+        campo.addEventListener('change', calcularCalorias);
       });
 
-      calculateCalories();
+      calcularCalorias();
     }());
   </script>
 {% endblock %}

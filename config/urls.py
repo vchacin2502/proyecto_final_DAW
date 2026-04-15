@@ -24,6 +24,7 @@ from config.views import (
     alimentos,
     alimentos_detalle,
     eliminar_usuario,
+    editar_alimento,
 )
 
 
@@ -48,6 +49,7 @@ urlpatterns = [
     path("comidas/<int:indice_comida>/borrar/", borrar_comida, name="borrar_comida"),
     path("alimentos/", alimentos, name="alimentos"),
     path("alimentos/<int:id>/detalle/", alimentos_detalle, name="alimentos_detalle"),
+    path("alimentos/<int:id>/editar/", editar_alimento, name="editar_alimento"),
     path("panel-admin/incidencias/", admin_incidencias, name="admin_incidencias"),
     path("panel-admin/chat/", admin_chat, name="admin_chat"),
     path("panel-admin/usuarios/", admin_usuarios, name="admin_usuarios"),

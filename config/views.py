@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 # ---existing code---
 
+from .forms import AlimentoForm
+from django.shortcuts import get_object_or_404
+
 @login_required
 @require_POST
 def eliminar_usuario(request, id):
@@ -22,6 +25,20 @@ def eliminar_usuario(request, id):
     except User.DoesNotExist:
         messages.error(request, "Usuario no encontrado.")
     return redirect("admin_usuarios")
+
+@login_required
+def editar_alimento(request, id):
+    alimento = get_object_or_404(Alimento, id=id, usuario=request.user)
+    if request.method == "POST":
+        form = AlimentoForm(request.POST, instance=alimento)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Alimento actualizado correctamente.")
+            return redirect("alimentos")
+    else:
+        form = AlimentoForm(instance=alimento)
+    return render(request, "paginas/alimento_form.html", {"form": form, "alimento": alimento})
+
 from django.http import JsonResponse, Http404
 # Vista para devolver los datos de un alimento en JSON
 from .models import Alimento
@@ -47,6 +64,7 @@ def alimentos_detalle(request, id):
         'saturadas': alimento.saturadas,
     }
     return JsonResponse(data)
+
 # --- INTEGRATED FROM decorators.py ---
 from django.core.exceptions import PermissionDenied
 
@@ -489,12 +507,12 @@ def _asegurar_salas_chat():
     for definicion in CHAT_SALA_DEFINICION:
         sala, _ = SalaChat.objects.get_or_create(
             slug=definicion["slug"],
-            defaults={"nombre": definicion["name"], "descripcion": definicion["description"]},
+            defaults={"nombre": definicion["name"]},
         )
-        if sala.nombre != definicion["name"] or sala.descripcion != definicion["description"]:
+        if sala.nombre != definicion["name"]:
             sala.nombre = definicion["name"]
-            sala.descripcion = definicion["description"]
-            sala.save(update_fields=["nombre", "descripcion"])
+            # sala.descripcion = definicion["description"]
+            sala.save(update_fields=["nombre"])
         salas.append(sala)
     return salas
 
