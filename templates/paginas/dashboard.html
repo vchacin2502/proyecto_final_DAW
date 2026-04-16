@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% load l10n %}
+
+{% block titulo %}Dashboard{% endblock %}
+
+{% block contenido %}
+  <style>
+        .meal-summary-card {
+          transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+          cursor: pointer;
+        }
+        .meal-summary-card:hover, .meal-summary-card:focus {
+          box-shadow: 0 0.5rem 1.2rem rgba(31,122,140,0.13);
+          border-color: #3b82f6 !important;
+          background: #eaf1fb;
+          z-index: 2;
+        }
+    :root {
+      --dashboard-track: #eceef2;
+      --dashboard-hero-1: #f6f8ff;
+      --dashboard-hero-2: #eef8f1;
+      --dashboard-hero-border: #d9e4dd;
+    }
+
+    [data-bs-theme="dark"] {
+      --dashboard-track: #2b3644;
+      --dashboard-hero-1: #1a2633;
+      --dashboard-hero-2: #1e2e3d;
+      --dashboard-hero-border: #3b4c60;
+    }
+
+    .macro-progress {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #eceef2;
+    }
+
+    .macro-progress .macro-fill {
+      display: block;
+      height: 100%;
+      max-width: 100%;
+      flex: 0 0 auto;
+      transform-origin: left center;
+      animation: progressGrow 900ms ease both;
+    }
+
+    .progress-orange { background-color: #f08a24 !important; }
+    @keyframes progressGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    .kcal-hero, .surface-soft, .meals-panel, .meal-summary-card {
+      border: 1.5px solid #b0b8be !important;
+      border-radius: 0.8rem;
+      background: #f8fafc;
+      box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
+    }
+
+    [data-bs-theme="dark"] .kcal-hero, [data-bs-theme="dark"] .surface-soft, [data-bs-theme="dark"] .meals-panel, [data-bs-theme="dark"] .meal-summary-card {
+      border: 1.5px solid #3a4957 !important;
+      background: #232b36;
+    }
+  </style>
+
+  <div class="row g-4 mb-4 align-items-stretch">
+    <div class="col-12 col-xl-7 d-flex flex-column gap-4">
+      <div class="kcal-hero p-3 p-md-4 mb-2">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+          <div>
+            <p class="small text-secondary mb-1">Progreso calorico de hoy</p>
+            <p class="h4 mb-0">{{ calorias_consumidas|default:0 }} kcal / {{ calorias_objetivo }} kcal</p>
+          </div>
+          <div class="text-lg-end">
+            <p class="small text-secondary mb-1">Restantes</p>
+            <p class="kcal-remaining mb-0">{{ calorias_restantes }} kcal</p>
+          </div>
+        </div>
+
+        <div class="macro-progress">
+          <div
+            class="macro-fill {% if tono_calorias == 'danger' %}bg-danger{% elif tono_calorias == 'orange' %}progress-orange{% else %}bg-warning{% endif %}"
+            role="progressbar"
+            data-target-width="{{ progreso_calorias }}%"
+            style="width: {% localize off %}{{ progreso_calorias }}{% endlocalize %}%;"
+            aria-valuenow="{{ progreso_calorias }}"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+
+
+      </div>
+
+      <div class="surface-soft p-3 p-md-4 mb-2">
+        <h2 class="h5 mb-3">Macros de hoy</h2>
+        <div class="vstack gap-3">
+          <div>
+            <div class="d-flex justify-content-between"><span>Proteinas</span><span>{{ macros.proteinas.actual }} g / {{ macros.proteinas.objetivo }} g</span></div>
+            <div class="macro-progress">
+              <div
+                class="macro-fill {% if macros.proteinas.tono == 'danger' %}bg-danger{% elif macros.proteinas.tono == 'orange' %}progress-orange{% else %}bg-warning{% endif %}"
+                data-target-width="{{ macros.proteinas.porcentaje }}%"
+                style="width: {% localize off %}{{ macros.proteinas.porcentaje }}{% endlocalize %}%;"
+              ></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between"><span>Grasas</span><span>{{ macros.grasas.actual }} g / {{ macros.grasas.objetivo }} g</span></div>
+            <div class="macro-progress">
+              <div
+                class="macro-fill {% if macros.grasas.tono == 'danger' %}bg-danger{% elif macros.grasas.tono == 'orange' %}progress-orange{% else %}bg-warning{% endif %}"
+                data-target-width="{{ macros.grasas.porcentaje }}%"
+                style="width: {% localize off %}{{ macros.grasas.porcentaje }}{% endlocalize %}%;"
+              ></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between"><span>Carbohidratos</span><span>{{ macros.carbohidratos.actual }} g / {{ macros.carbohidratos.objetivo }} g</span></div>
+            <div class="macro-progress">
+              <div
+                class="macro-fill {% if macros.carbohidratos.tono == 'danger' %}bg-danger{% elif macros.carbohidratos.tono == 'orange' %}progress-orange{% else %}bg-warning{% endif %}"
+                data-target-width="{{ macros.carbohidratos.porcentaje }}%"
+                style="width: {% localize off %}{{ macros.carbohidratos.porcentaje }}{% endlocalize %}%;"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <a href="{% url 'agregar_comida_inicio' %}" class="btn btn-primary w-100">Agregar comida</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+      <div class="meals-panel p-3 p-md-4">
+        <h2 class="h5 mb-3">Comidas de hoy</h2>
+        {% if historial_comidas %}
+          <div class="meals-list vstack gap-2">
+            {% for meal in historial_comidas %}
+              <button type="button" class="meal-summary-card p-2 px-3" data-bs-toggle="modal" data-bs-target="#mealModal{{ meal.indice_historial }}">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                  <span class="fw-semibold">{{ meal.etiqueta_comida }}</span>
+                  <span class="d-flex align-items-center gap-2">
+                    <span class="badge text-bg-primary">{{ meal.totales.kcal }} kcal</span>
+                    <i class="bi bi-info-circle text-secondary" style="font-size:1.2rem;"></i>
+                  </span>
+                </div>
+              </button>
+
+              <div class="modal fade" id="mealModal{{ meal.indice_historial }}" tabindex="-1" aria-labelledby="mealModalLabel{{ meal.indice_historial }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div>
+                        <h5 class="modal-title mb-0" id="mealModalLabel{{ meal.indice_historial }}">{{ meal.etiqueta_comida }}</h5>
+                      </div>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div>
+                        <h6 class="fw-semibold mb-3">Resumen de macros</h6>
+                        <div class="row g-2">
+                          <div class="col-6 col-sm-4">
+                            <div class="text-center p-2 surface-soft rounded">
+                              <p class="small text-secondary mb-1">Proteínas</p>
+                              <p class="h6 mb-0">{{ meal.totales.proteinas }} g</p>
+                            </div>
+                          </div>
+                          <div class="col-6 col-sm-4">
+                            <div class="text-center p-2 surface-soft rounded">
+                              <p class="small text-secondary mb-1">Carbohidratos</p>
+                              <p class="h6 mb-0">{{ meal.totales.carbohidratos }} g</p>
+                            </div>
+                          </div>
+                          <div class="col-6 col-sm-4">
+                            <div class="text-center p-2 surface-soft rounded">
+                              <p class="small text-secondary mb-1">Grasas</p>
+                              <p class="h6 mb-0">{{ meal.totales.grasas }} g</p>
+                            </div>
+                          </div>
+                          <div class="col-6 col-sm-4">
+                            <div class="text-center p-2 surface-soft rounded">
+                              <p class="small text-secondary mb-1">Azúcares</p>
+                              <p class="h6 mb-0">{{ meal.totales.azucares }} g</p>
+                            </div>
+                          </div>
+                          <div class="col-6 col-sm-4">
+                            <div class="text-center p-2 surface-soft rounded">
+                              <p class="small text-secondary mb-1">Saturadas</p>
+                              <p class="h6 mb-0">{{ meal.totales.saturadas }} g</p>
+                            </div>
+                          </div>
+                          <div class="col-6 col-sm-4">
+                            <div class="text-center p-2 surface-soft rounded">
+                              <p class="small text-secondary mb-1">Calorías</p>
+                              <p class="h6 mb-0">{{ meal.totales.kcal }} kcal</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <a href="{% url 'editar_comida' meal.indice_historial %}" class="btn btn-outline-secondary">Editar</a>
+                      <a href="{% url 'borrar_comida' meal.indice_historial %}" class="btn btn-outline-danger" onclick="return confirm('¿Estás seguro de que quieres borrar esta comida?');">Borrar</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="alert alert-light border mb-0">Todavia no has añadido ninguna comida hoy.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

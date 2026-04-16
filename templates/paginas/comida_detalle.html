@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ etiqueta_comida }}{% endblock %}
+
+{% block contenido %}
+  <style>
+    .resumen-comida {
+      position: sticky;
+      top: 1rem;
+      border: 2px solid #b0b8be;
+      border-radius: 0.7rem;
+      background: #fff;
+    }
+    [data-bs-theme="dark"] .resumen-comida {
+      border: 2px solid #3a4957;
+      background: #232b36;
+    }
+    .resumen-lista { max-height: 240px; overflow: auto; }
+    .catalogo-toolbar .form-control { max-width: 420px; }
+    .resumen-macros-box {
+      border: 2px solid #b0b8be;
+      border-radius: 0.7rem;
+      background: #fff;
+      color: #212529;
+    }
+    [data-bs-theme="dark"] .resumen-macros-box {
+      border: 2px solid #3a4957;
+      background: #232b36;
+      color: #e9f2fb;
+    }
+    @media (max-width: 576px) {
+      .catalogo-toolbar { flex-direction: column; align-items: stretch; }
+      .catalogo-toolbar .form-control { max-width: none; }
+      .surface-soft, .resumen-comida { padding: 1rem !important; }
+      .tabla-scrollable {
+        max-height: 260px;
+        overflow-y: auto;
+        overflow-x: auto;
+        width: 100%;
+        min-width: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .table {
+        width: 100%;
+        table-layout: auto;
+      }
+      .table td, .table th {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+      h2.h5, .btn, .page-title, .page-subtitle { white-space: normal !important; word-break: break-word; }
+      .row.g-4 { --bs-gutter-x: 0.5rem; }
+    }
+  </style>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-3">
+    <div>
+      <h1 class="page-title h3 mb-1">{{ etiqueta_comida }}</h1>
+      <p class="page-subtitle mb-0">
+        {% if modo_edicion %}
+          Edita esta comida: puedes quitar alimentos, cambiar cantidades y añadir nuevos.
+        {% else %}
+          Selecciona alimentos de la base, indica cantidad y termina la comida para volver al dashboard.
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <form method="post" action="{% if modo_edicion %}{% url 'editar_comida' indice_comida %}{% else %}{% url 'agregar_comida_detalle' %}{% endif %}">
+    {% csrf_token %}
+    <div class="row g-4">
+      <div class="col-12 col-lg-8">
+        {% if modo_edicion and items_existentes %}
+          <div class="surface-soft p-3 p-md-4 mb-4">
+            <h2 class="h5 mb-3">Alimentos actuales</h2>
+            <div class="tabla-scrollable">
+              <table class="table table-hover align-middle bg-white mb-0">
+                <thead>
+                  <tr>
+                    <th>Mantener</th>
+                    <th>Alimento</th>
+                    <th>Kcal actuales</th>
+                    <th>Cantidad</th>
+                    <th>Unidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in items_existentes %}
+                    <tr
+                      class="fila-resumen-existente"
+                      data-nombre="{{ item.nombre }}"
+                      data-kcal="{{ item.kcal }}"
+                      data-proteinas="{{ item.proteinas }}"
+                      data-carbohidratos="{{ item.carbohidratos }}"
+                      data-azucares="{{ item.azucares }}"
+                      data-grasas="{{ item.grasas }}"
+                      data-saturadas="{{ item.saturadas }}"
+                      data-cantidad="{{ item.cantidad }}"
+                    >
+                      <td>
+                        <input class="form-check-input resumen-check-existente" type="checkbox" name="existing_keep_{{ forloop.counter0 }}" value="1" checked>
+                      </td>
+                      <td>
+                        <div class="fw-semibold">{{ item.nombre }}</div>
+                        <div class="small text-secondary">{{ item.marca }}</div>
+                      </td>
+                      <td>{{ item.kcal }}</td>
+                      <td style="min-width: 120px;">
+                        <input type="number" step="0.1" class="form-control form-control-sm resumen-cantidad-existente" name="existing_qty_{{ forloop.counter0 }}" value="{{ item.cantidad }}">
+                      </td>
+                      <td style="min-width: 110px;">
+                        <select class="form-select form-select-sm resumen-unidad-existente" name="existing_unit_{{ forloop.counter0 }}">
+                          <option value="g" {% if item.unidad == 'g' %}selected{% endif %}>g</option>
+                          <option value="ml" {% if item.unidad == 'ml' %}selected{% endif %}>ml</option>
+                          <option value="unidad" {% if item.unidad == 'unidad' %}selected{% endif %}>unidad</option>
+                        </select>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="surface-soft p-3 p-md-4">
+          <h2 class="h5 mb-3">{% if modo_edicion %}Agregar mas alimentos{% else %}Alimentos de la base{% endif %}</h2>
+          <div class="d-flex align-items-center gap-2 mb-3 catalogo-toolbar">
+            <input
+              type="text"
+              id="buscadorCatalogoComida"
+              class="form-control form-control-sm"
+              placeholder="Buscar alimento o marca..."
+              aria-label="Buscar alimento en el catalogo"
+            >
+          </div>
+          <div class="tabla-scrollable">
+            <table class="table table-hover align-middle bg-white mb-0">
+              <thead>
+                <tr>
+                  <th>Usar</th>
+                  <th>Alimento</th>
+                  <th>Referencia</th>
+                  <th>Kcal</th>
+                  <th>P</th>
+                  <th>C</th>
+                  <th>Az.</th>
+                  <th>G</th>
+                  <th>Sat.</th>
+                  <th>Cantidad</th>
+                  <th>Unidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for food in catalogo %}
+                  <tr
+                    class="fila-resumen-nueva"
+                    data-busqueda="{{ food.nombre|lower }} {{ food.marca|lower }} {{ food.unidad|lower }}"
+                    data-nombre="{{ food.nombre }}"
+                    data-kcal="{{ food.kcal }}"
+                    data-proteinas="{{ food.proteinas }}"
+                    data-carbohidratos="{{ food.carbohidratos }}"
+                    data-azucares="{{ food.azucares }}"
+                    data-grasas="{{ food.grasas }}"
+                    data-saturadas="{{ food.saturadas }}"
+                    data-cantidad-referencia="{{ food.cantidad_referencia }}"
+                  >
+                    <td>
+                      <input class="form-check-input resumen-check-nueva" type="checkbox" name="use_food_{{ food.id }}" value="1">
+                    </td>
+                    <td>
+                      <div class="fw-semibold">{{ food.nombre }}</div>
+                      <div class="small text-secondary">{{ food.marca }}</div>
+                    </td>
+                    <td>{{ food.cantidad_referencia }} {{ food.unidad }}</td>
+                    <td>{{ food.kcal }}</td>
+                    <td>{{ food.proteinas }}</td>
+                    <td>{{ food.carbohidratos }}</td>
+                    <td>{{ food.azucares }}</td>
+                    <td>{{ food.grasas }}</td>
+                    <td>{{ food.saturadas }}</td>
+                    <td style="min-width: 110px;">
+                      <input type="number" step="0.1" class="form-control form-control-sm resumen-cantidad-nueva" name="qty_food_{{ food.id }}">
+                    </td>
+                    <td style="min-width: 100px;">
+                      <select class="form-select form-select-sm resumen-unidad-nueva" name="unit_food_{{ food.id }}">
+                        <option value="g">g</option>
+                        <option value="ml">ml</option>
+                        <option value="unidad">unidad</option>
+                      </select>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="surface-soft p-3 p-md-4 resumen-comida">
+          <h2 class="h5 mb-3">Resumen de alimentos</h2>
+          <div class="small text-secondary mb-2">Seleccionados: <span id="resumenContador">0</span></div>
+          <ul id="resumenLista" class="list-group list-group-flush rounded mb-3 resumen-lista">
+            <li class="list-group-item small text-secondary">Aun no has seleccionado alimentos.</li>
+          </ul>
+          <div class="resumen-macros-box p-2 mb-3 small">
+            <div class="d-flex justify-content-between"><span>Kcal</span><strong id="resumenKcal">0</strong></div>
+            <div class="d-flex justify-content-between"><span>Proteinas</span><strong id="resumenProteinas">0 g</strong></div>
+            <div class="d-flex justify-content-between"><span>Carbohidratos</span><strong id="resumenCarbohidratos">0 g</strong></div>
+            <div class="d-flex justify-content-between"><span>Grasas</span><strong id="resumenGrasas">0 g</strong></div>
+          </div>
+          <button type="submit" class="btn btn-success w-100 mb-2">{% if modo_edicion %}Actualizar comida{% else %}Terminar comida{% endif %}</button>
+          {% if not modo_edicion %}
+            <a href="{% url 'agregar_comida_inicio' %}" class="btn btn-outline-secondary w-100">Cambiar tipo de comida</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    (function () {
+      var contador = document.getElementById("resumenContador");
+      var lista = document.getElementById("resumenLista");
+      var kcalEl = document.getElementById("resumenKcal");
+      var proteinasEl = document.getElementById("resumenProteinas");
+      var carbohidratosEl = document.getElementById("resumenCarbohidratos");
+      var grasasEl = document.getElementById("resumenGrasas");
+
+      function toNumber(value) {
+        var n = parseFloat(value);
+        return Number.isFinite(n) ? n : 0;
+      }
+
+      function round2(value) {
+        return Math.round(value * 100) / 100;
+      }
+
+      function pushItem(items, name, qty, unit, totals) {
+        if (qty <= 0) {
+          return;
+        }
+        items.push({
+          nombre: name,
+          cantidad: round2(qty),
+          unidad: unit,
+          kcal: round2(totals.kcal),
+          proteinas: round2(totals.proteinas),
+          carbohidratos: round2(totals.carbohidratos),
+          grasas: round2(totals.grasas)
+        });
+      }
+
+      function collectItems() {
+        var items = [];
+
+        document.querySelectorAll(".fila-resumen-existente").forEach(function (row) {
+          var checked = row.querySelector(".resumen-check-existente");
+          var qtyInput = row.querySelector(".resumen-cantidad-existente");
+          var unitSelect = row.querySelector(".resumen-unidad-existente");
+          if (!checked || !qtyInput || !unitSelect || !checked.checked) {
+            return;
+          }
+
+          var baseQty = toNumber(row.dataset.cantidad);
+          var qty = toNumber(qtyInput.value);
+          if (baseQty <= 0 || qty <= 0) {
+            return;
+          }
+          var factor = qty / baseQty;
+          pushItem(items, row.dataset.nombre, qty, unitSelect.value, {
+            kcal: toNumber(row.dataset.kcal) * factor,
+            proteinas: toNumber(row.dataset.proteinas) * factor,
+            carbohidratos: toNumber(row.dataset.carbohidratos) * factor,
+            grasas: toNumber(row.dataset.grasas) * factor
+          });
+        });
+
+        document.querySelectorAll(".fila-resumen-nueva").forEach(function (row) {
+          var checked = row.querySelector(".resumen-check-nueva");
+          var qtyInput = row.querySelector(".resumen-cantidad-nueva");
+          var unitSelect = row.querySelector(".resumen-unidad-nueva");
+          if (!checked || !qtyInput || !unitSelect || !checked.checked) {
+            return;
+          }
+
+          var refQty = toNumber(row.dataset.cantidadReferencia);
+          var qty = toNumber(qtyInput.value);
+          if (refQty <= 0 || qty <= 0) {
+            return;
+          }
+          var factor = qty / refQty;
+          pushItem(items, row.dataset.nombre, qty, unitSelect.value, {
+            kcal: toNumber(row.dataset.kcal) * factor,
+            proteinas: toNumber(row.dataset.proteinas) * factor,
+            carbohidratos: toNumber(row.dataset.carbohidratos) * factor,
+            grasas: toNumber(row.dataset.grasas) * factor
+          });
+        });
+
+        return items;
+      }
+
+      function renderSummary() {
+        var items = collectItems();
+        var totalKcal = 0;
+        var totalProteinas = 0;
+        var totalCarbohidratos = 0;
+        var totalGrasas = 0;
+
+        lista.innerHTML = "";
+        if (!items.length) {
+          lista.innerHTML = '<li class="list-group-item small text-secondary">Aun no has seleccionado alimentos.</li>';
+        } else {
+          items.forEach(function (item) {
+            totalKcal += item.kcal;
+            totalProteinas += item.proteinas;
+            totalCarbohidratos += item.carbohidratos;
+            totalGrasas += item.grasas;
+
+            var li = document.createElement("li");
+            li.className = "list-group-item";
+            li.innerHTML = '<div class="fw-semibold small">' + item.nombre + '</div>'
+              + '<div class="small text-secondary">' + item.cantidad + ' ' + item.unidad + ' | ' + item.kcal + ' kcal</div>';
+            lista.appendChild(li);
+          });
+        }
+
+        contador.textContent = String(items.length);
+        kcalEl.textContent = String(round2(totalKcal));
+        proteinasEl.textContent = round2(totalProteinas) + " g";
+        carbohidratosEl.textContent = round2(totalCarbohidratos) + " g";
+        grasasEl.textContent = round2(totalGrasas) + " g";
+      }
+
+      document.querySelectorAll(".resumen-check-existente, .resumen-cantidad-existente, .resumen-unidad-existente, .resumen-check-nueva, .resumen-cantidad-nueva, .resumen-unidad-nueva").forEach(function (el) {
+        el.addEventListener("change", renderSummary);
+        el.addEventListener("input", renderSummary);
+      });
+
+      var buscadorCatalogo = document.getElementById("buscadorCatalogoComida");
+      var filasCatalogo = Array.prototype.slice.call(document.querySelectorAll(".fila-resumen-nueva"));
+
+      function filtrarCatalogo() {
+        var termino = (buscadorCatalogo.value || "").trim().toLowerCase();
+        filasCatalogo.forEach(function (fila) {
+          var texto = (fila.dataset.busqueda || "");
+          fila.style.display = texto.indexOf(termino) !== -1 ? "" : "none";
+        });
+      }
+
+      if (buscadorCatalogo) {
+        buscadorCatalogo.addEventListener("input", filtrarCatalogo);
+        buscadorCatalogo.addEventListener("change", filtrarCatalogo);
+      }
+
+      renderSummary();
+      filtrarCatalogo();
+    })();
+  </script>
+{% endblock %}

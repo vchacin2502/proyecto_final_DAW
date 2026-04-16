@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %}Alimento{% endblock %}
+{% block contenido %}
+  <h1 class="h4 mb-3">{{ alimento.nombre|default:'Nuevo alimento' }}</h1>
+  <form method="post" class="row g-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a href="{% url 'alimentos' %}" class="btn btn-secondary">Cancelar</a>
+      {% if alimento.id %}
+        <a href="{% url 'eliminar_alimento' alimento.id %}" class="btn btn-danger ms-2" onclick="return confirm('¿Seguro que quieres borrar este alimento?');">Borrar</a>
+      {% endif %}
+    </div>
+  </form>
+{% endblock %}

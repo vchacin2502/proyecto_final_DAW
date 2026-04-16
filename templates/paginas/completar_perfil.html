@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block titulo %}Completar perfil{% endblock %}
+
+{% block contenido %}
+  <style>
+    .profile-setup-layout {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .profile-setup-card {
+      border: 1.5px solid #b0b8be;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 0.5rem 1.2rem rgba(31,122,140,0.07);
+    }
+    [data-bs-theme="dark"] .profile-setup-card {
+      border: 1.5px solid #3a4957;
+      background: #181c22;
+    }
+  </style>
+
+  <div class="profile-setup-layout">
+    <div class="profile-setup-card p-4 p-md-5 h-100">
+      <div class="mb-4">
+        <h1 class="page-title h3 mb-2">Completar perfil</h1>
+        <p class="page-subtitle mb-0">Rellena tus datos iniciales una sola vez para empezar con CaFit.</p>
+      </div>
+
+      <form method="post" action="{% url 'completar_perfil' %}" class="row g-3">
+        {% csrf_token %}
+        <div class="col-12 col-md-4">
+          <label for="edad" class="form-label">Edad</label>
+          <input id="edad" name="edad" type="number" class="form-control form-control-lg" value="{{ datos_perfil.edad }}" required>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <label for="altura" class="form-label">Altura (cm)</label>
+          <input id="altura" name="altura" type="text" inputmode="decimal" class="form-control form-control-lg" value="{{ datos_perfil.altura }}" required>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <label for="peso" class="form-label">Peso actual (kg)</label>
+          <input id="peso" name="peso" type="text" inputmode="decimal" class="form-control form-control-lg" value="{{ datos_perfil.peso }}" required>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="sexo" class="form-label">Sexo</label>
+          <select id="sexo" name="sexo" class="form-select form-select-lg" required>
+            <option value="hombre" {% if datos_perfil.sexo == 'Hombre' or datos_perfil.sexo == 'hombre' %}selected{% endif %}>Hombre</option>
+            <option value="mujer" {% if datos_perfil.sexo == 'Mujer' or datos_perfil.sexo == 'mujer' %}selected{% endif %}>Mujer</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label for="objetivo" class="form-label">Objetivo</label>
+          <select id="objetivo" name="objetivo" class="form-select form-select-lg" required>
+            <option value="mantener_peso" {% if datos_perfil.objetivo == 'Mantener peso' or datos_perfil.objetivo == 'mantener_peso' %}selected{% endif %}>Mantener peso</option>
+            <option value="bajar_peso" {% if datos_perfil.objetivo == 'Bajar de peso' or datos_perfil.objetivo == 'bajar_peso' %}selected{% endif %}>Bajar de peso</option>
+            <option value="ganar_peso" {% if datos_perfil.objetivo == 'Ganar peso' or datos_perfil.objetivo == 'ganar_peso' %}selected{% endif %}>Ganar peso</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <div class="surface-soft p-3 p-md-4">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+              <span class="fw-semibold fs-4">Calorías recomendadas</span>
+              <span class="fw-semibold fs-4"><span id="caloriasPreview">{{ datos_perfil.meta_calorias|default:'0' }}</span> kcal</span>
+            </div>
+            <input type="hidden" id="meta_calorias" name="meta_calorias" value="{{ datos_perfil.meta_calorias }}">
+            <div class="row g-2 mt-2">
+              <div class="col-12 col-md-4 text-center border rounded py-2 surface-soft">
+                <div class="small text-secondary">Proteínas</div>
+                <div class="fw-semibold"><span id="proteinasPreview">{{ datos_perfil.meta_proteinas|default:'0' }}</span> g</div>
+              </div>
+              <div class="col-12 col-md-4 text-center border rounded py-2 surface-soft">
+                <div class="small text-secondary">Grasas</div>
+                <div class="fw-semibold"><span id="grasasPreview">{{ datos_perfil.meta_grasas|default:'0' }}</span> g</div>
+              </div>
+              <div class="col-12 col-md-4 text-center border rounded py-2 surface-soft">
+                <div class="small text-secondary">Carbohidratos</div>
+                <div class="fw-semibold"><span id="carbohidratosPreview">{{ datos_perfil.meta_carbohidratos|default:'0' }}</span> g</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary px-4">Completar el perfil</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const campoEdad = document.getElementById('edad');
+      const campoAltura = document.getElementById('altura');
+      const campoPeso = document.getElementById('peso');
+      const campoSexo = document.getElementById('sexo');
+      const campoObjetivo = document.getElementById('objetivo');
+      const campoCaloriasOculto = document.getElementById('meta_calorias');
+      const caloriasVista = document.getElementById('caloriasPreview');
+      const proteinasVista = document.getElementById('proteinasPreview');
+      const grasasVista = document.getElementById('grasasPreview');
+      const carbohidratosVista = document.getElementById('carbohidratosPreview');
+
+      function aNumero(valor) {
+        const convertido = parseFloat(String(valor).replace(',', '.'));
+        return Number.isFinite(convertido) ? convertido : 0;
+      }
+
+      function calcularCalorias() {
+        const edad = aNumero(campoEdad.value);
+        const altura = aNumero(campoAltura.value);
+        const peso = aNumero(campoPeso.value);
+
+        if (!edad || !altura || !peso) {
+          campoCaloriasOculto.value = '';
+          caloriasVista.textContent = '0';
+          proteinasVista.textContent = '0';
+          grasasVista.textContent = '0';
+          carbohidratosVista.textContent = '0';
+          return;
+        }
+
+        let basal = (10 * peso) + (6.25 * altura) - (5 * edad);
+        if (campoSexo.value === 'mujer') {
+          basal -= 161;
+        } else {
+          basal += 5;
+        }
+
+        let mantenimiento = basal * 1.4;
+        if (campoObjetivo.value === 'bajar_peso') {
+          mantenimiento -= 400;
+        } else if (campoObjetivo.value === 'ganar_peso') {
+          mantenimiento += 300;
+        }
+
+        const calorias = Math.max(Math.round(mantenimiento), 1200);
+
+        let ratioProte = 0.30;
+        let ratioGrasas = 0.30;
+        let ratioCarbs = 0.40;
+        if (campoObjetivo.value === 'bajar_peso') {
+          ratioProte = 0.35;
+          ratioGrasas = 0.30;
+          ratioCarbs = 0.35;
+        } else if (campoObjetivo.value === 'ganar_peso') {
+          ratioProte = 0.30;
+          ratioGrasas = 0.25;
+          ratioCarbs = 0.45;
+        }
+
+        const proteinas = Math.round((calorias * ratioProte) / 4);
+        const grasas = Math.round((calorias * ratioGrasas) / 9);
+        const carbohidratos = Math.round((calorias * ratioCarbs) / 4);
+
+        campoCaloriasOculto.value = calorias;
+        caloriasVista.textContent = calorias;
+        proteinasVista.textContent = proteinas;
+        grasasVista.textContent = grasas;
+        carbohidratosVista.textContent = carbohidratos;
+      }
+
+      [campoEdad, campoAltura, campoPeso, campoSexo, campoObjetivo].forEach((campo) => {
+        campo.addEventListener('input', calcularCalorias);
+        campo.addEventListener('change', calcularCalorias);
+      });
+
+      calcularCalorias();
+    }());
+  </script>
+{% endblock %}

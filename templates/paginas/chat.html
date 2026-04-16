@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block titulo %}Chat{% endblock %}
+
+{% block contenido %}
+  <style>
+    .chat-room-card {
+      border: 1.5px solid #b0b8be !important;
+      border-radius: 0.95rem;
+      background: #f8fafc;
+      box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
+      color: #21313f;
+      transition: transform 0.16s, box-shadow 0.16s, border-color 0.16s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100%;
+      min-height: 90px;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    .chat-room-card:hover,
+    .chat-room-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 0.75rem 1.5rem rgba(31,122,140,0.12);
+      border-color: #1f7a8c;
+      outline: none;
+    }
+    [data-bs-theme="dark"] .chat-room-card {
+      border: 1.5px solid #3a4957 !important;
+      background: #232b36;
+      color: #e9f2fb;
+    }
+    [data-bs-theme="dark"] .chat-room-card:hover,
+    [data-bs-theme="dark"] .chat-room-card:focus-visible {
+      box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,0.28);
+      border-color: #82d3e3;
+    }
+    .chat-room-card .h5 {
+      margin-bottom: 0;
+      width: 100%;
+    }
+  </style>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+    <div>
+      <h1 class="page-title h3 mb-1">Sala de chats</h1>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    {% for sala in salas %}
+      <div class="col-12 col-md-6">
+        <a href="{% url 'chat_sala' sala.slug %}" class="chat-room-card d-block text-decoration-none h-100">
+          <h2 class="h5">{{ sala.nombre }}</h2>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="surface-soft p-3 p-md-4 border">
+    <h2 class="h6 text-uppercase text-secondary mb-3">Normas de comunidad</h2>
+    <ul class="mb-0 ps-3 small">
+      <li>Respeta a otros usuarios.</li>
+      <li>Evita publicar datos personales.</li>
+      <li>Reporta mensajes ofensivos al admin.</li>
+      <li>Evita spam, publicidad y enlaces engañosos.</li>
+      <li>Mantén cada mensaje dentro del tema de su sala.</li>
+    </ul>
+  </div>
+{% endblock %}

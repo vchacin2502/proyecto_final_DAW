@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ sala.nombre }}{% endblock %}
+
+{% block contenido %}
+  <style>
+            [data-bs-theme="dark"] .chat-bubble,
+            [data-bs-theme="dark"] .chat-bubble.mine,
+            [data-bs-theme="dark"] .chat-bubble.theirs,
+            [data-bs-theme="dark"] .chat-card-surface,
+            [data-bs-theme="dark"] .chat-bubble-body,
+            [data-bs-theme="dark"] .chat-bubble-title,
+            [data-bs-theme="dark"] .chat-author {
+              color: #fff !important;
+            }
+            [data-bs-theme="dark"] .chat-topbar-title {
+              color: #fff !important;
+            }
+            [data-bs-theme="dark"] .form-control,
+            [data-bs-theme="dark"] textarea.form-control {
+              color: #fff;
+              background: #111923;
+              border-color: #234;
+            }
+        /* Tema oscuro */
+        [data-bs-theme="dark"] .chat-window {
+          background: #16212d;
+          border-color: #234;
+        }
+        [data-bs-theme="dark"] .chat-messages {
+          background: #16212d;
+        }
+        [data-bs-theme="dark"] .chat-bubble.mine {
+          background: #1a5e47;
+          color: #fff;
+          border-color: #24735a;
+        }
+        [data-bs-theme="dark"] .chat-bubble.theirs,
+        [data-bs-theme="dark"] .chat-card-surface {
+          background: #1c2834;
+          color: #eaf6f2;
+          border-color: #234;
+        }
+        [data-bs-theme="dark"] .chat-topbar {
+          background: #123b41;
+          color: #ecf8f6;
+          border-bottom: 1px solid #234;
+        }
+        [data-bs-theme="dark"] .chat-back-btn {
+          background: #234;
+          border-color: #1a5e47;
+          color: #eaf6f2;
+        }
+        [data-bs-theme="dark"] .chat-back-btn:hover,
+        [data-bs-theme="dark"] .chat-back-btn:focus-visible {
+          background: #1a5e47;
+          border-color: #eaf6f2;
+        }
+        [data-bs-theme="dark"] .chat-composer {
+          background: #111923;
+          border-top: 1px solid #234;
+        }
+        [data-bs-theme="dark"] .chat-time {
+          color: #b2dfdb;
+        }
+        [data-bs-theme="dark"] .chat-empty-state {
+          color: #b2dfdb;
+        }
+        [data-bs-theme="dark"] .chat-icon-btn {
+          color: #b2dfdb;
+        }
+        [data-bs-theme="dark"] .chat-icon-btn:hover,
+        [data-bs-theme="dark"] .chat-icon-btn:focus-visible {
+          color: #fff;
+          background: #1a5e47;
+        }
+        [data-bs-theme="dark"] .chat-icon-btn.danger:hover,
+        [data-bs-theme="dark"] .chat-icon-btn.danger:focus-visible {
+          color: #ffb3b3;
+          background: #3a2323;
+        }
+    .chat-wrapper { max-width: 940px; margin: 0 auto; height: calc(100dvh - 11rem); display: flex; align-items: flex-start; }
+    .chat-shell { flex: 1; height: 100%; display: flex; flex-direction: column; gap: 0.5rem; overflow: hidden; position: relative; min-height: 0; }
+    .chat-back-btn { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: #e0f7f1; border: 1px solid #b2dfdb; color: #0b5f52; text-decoration: none; transition: all 0.2s; }
+    .chat-back-btn:hover, .chat-back-btn:focus-visible { background: #b2dfdb; border-color: #0b5f52; outline: none; }
+    .chat-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.5rem; padding: 0.45rem 0.55rem; border-bottom: 1px solid #b2dfdb; background: #0f6a5d; color: #f4fffc; }
+    .chat-topbar-title { margin: 0; text-align: center; font-size: 0.92rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-topbar-spacer { width: 34px; height: 34px; flex: 0 0 auto; pointer-events: none; }
+    .chat-window { background: #f4f8f7; border: 1px solid #b2dfdb; border-radius: 0.7rem; box-shadow: 0 0.5rem 1rem rgba(16,30,54,0.08); display: flex; flex-direction: column; flex: 1; min-height: 0; margin: 0; }
+    .chat-messages { flex: 1; min-height: 0; overflow: auto; padding: 0.3rem; scrollbar-width: none; -ms-overflow-style: none; }
+    .chat-messages::-webkit-scrollbar { display: none; }
+    .chat-bubble-row { display: flex; margin-bottom: 0.16rem; }
+    .chat-bubble-row.mine { justify-content: flex-end; }
+    .chat-bubble-row.theirs { justify-content: flex-start; }
+    .chat-bubble { max-width: min(76%, 500px); border-radius: 1.1rem; padding: 0.26rem 0.4rem 0.18rem; font-size: 0.79rem; box-shadow: 0 0.5rem 1rem rgba(16,30,54,0.08); border: 1px solid #b2dfdb; word-break: break-word; }
+    .chat-bubble.mine { background: #d9f4e8; border-top-right-radius: 0.25rem; }
+    .chat-bubble.theirs { background: #fff; border-top-left-radius: 0.25rem; }
+    .chat-author { font-weight: 700; font-size: 0.62rem; min-width: 0; }
+    .chat-time { color: #888; white-space: nowrap; font-size: 0.54rem; }
+    .chat-bubble-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.28rem; margin-bottom: 0.03rem; }
+    .chat-bubble-title { min-width: 0; flex: 1; }
+    .chat-bubble-body { margin: 0; font-size: 0.74rem; line-height: 1.16; }
+    .chat-bubble-footer { display: flex; justify-content: flex-end; align-items: center; margin-top: 0.08rem; }
+    .chat-icon-btn { width: 1.3rem; height: 1.3rem; border: 0; padding: 0; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: #888; flex: 0 0 auto; }
+    .chat-icon-btn:hover, .chat-icon-btn:focus-visible { color: #0b5f52; background: #e0f7f1; outline: none; }
+    .chat-icon-btn.danger:hover, .chat-icon-btn.danger:focus-visible { color: #dc3545; background: rgba(220, 53, 69, 0.12); }
+    .chat-icon-btn i { font-size: 0.72rem; line-height: 1; }
+    .chat-composer { background: #fff; border-top: 1px solid #b2dfdb; border-radius: 0 0 1rem 1rem; }
+    .chat-composer textarea { resize: none; min-height: 44px; max-height: 84px; }
+    .chat-send-btn { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 999px; flex: 0 0 auto; }
+    .chat-send-btn i { font-size: 1.05rem; line-height: 1; }
+    .chat-empty-state { padding: 1rem; text-align: center; color: #888; }
+    .chat-card-surface { background: #fff; border: 1px solid #b2dfdb; color: #222 !important; }
+    @media (max-width: 576px) {
+      .chat-wrapper { height: 100%; max-height: 100%; align-items: stretch; min-height: 0; }
+      .chat-shell { height: 100%; gap: 0.25rem; min-height: 0; }
+      .chat-window { min-height: 0; max-height: 100%; }
+      .chat-messages { padding: 0.24rem; min-height: 0; }
+      .chat-bubble { max-width: 98%; }
+      .chat-send-btn { width: 40px; height: 40px; }
+    }
+  </style>
+
+  <div class="chat-wrapper">
+    <div class="chat-shell">
+      <div class="chat-window">
+    <div class="chat-topbar">
+      <a href="{% url 'chat' %}" class="chat-back-btn" aria-label="Volver a salas" title="Volver a salas">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+      <h1 class="chat-topbar-title">{{ sala.nombre }}</h1>
+      <span class="chat-topbar-spacer" aria-hidden="true"></span>
+    </div>
+    <div
+      class="chat-messages"
+      id="chat-messages"
+      data-fetch-url="{% url 'chat_mensajes_nuevos' sala.slug %}"
+      data-post-url="{% url 'chat_sala' sala.slug %}"
+    >
+      {% for mensaje in mensajes %}
+        {% if mensaje.usuario_id == request.user.id %}
+          <div class="chat-bubble-row mine" data-message-id="{{ mensaje.id }}" data-own-message="true">
+            <div class="chat-bubble mine">
+              <div class="chat-bubble-header">
+                <div class="chat-bubble-title">
+                  <div class="chat-author">Tú</div>
+                </div>
+
+              </div>
+              <p class="chat-bubble-body">{{ mensaje.contenido }}</p>
+              <div class="chat-bubble-footer">
+                <span class="chat-time">{{ mensaje.creado_en|date:"H:i" }}</span>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="chat-bubble-row theirs" data-message-id="{{ mensaje.id }}" data-own-message="false">
+            <div class="chat-bubble theirs chat-card-surface">
+              <div class="chat-bubble-header">
+                <div class="chat-bubble-title">
+                  <div class="chat-author">{% if mensaje.usuario %}{{ mensaje.usuario.username }}{% else %}Anonimo{% endif %}</div>
+                </div>
+                <form method="post" action="{% url 'chat_sala' sala.slug %}" class="m-0">
+                  {% csrf_token %}
+                  <input type="hidden" name="accion" value="reportar_mensaje">
+                  <input type="hidden" name="mensaje_id" value="{{ mensaje.id }}">
+                  <input type="hidden" name="razon" value="Mensaje reportado desde la sala.">
+                  <button type="submit" class="chat-icon-btn danger" aria-label="Reportar mensaje" title="Reportar mensaje">
+                    <i class="bi bi-flag-fill"></i>
+                  </button>
+                </form>
+              </div>
+              <p class="chat-bubble-body">{{ mensaje.contenido }}</p>
+              <div class="chat-bubble-footer">
+                <span class="chat-time">{{ mensaje.creado_en|date:"H:i" }}</span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% empty %}
+        <div class="chat-empty-state">
+          <div class="surface-soft p-4 chat-card-surface">
+            <h3 class="h5 mb-2">Aun no hay mensajes</h3>
+            <p class="mb-0">Se el primero en escribir en esta sala.</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <form method="post" action="{% url 'chat_sala' sala.slug %}" class="chat-composer p-2 p-md-2" id="chat-composer-form">
+      {% csrf_token %}
+      <input type="hidden" name="accion" value="enviar_mensaje">
+      <div class="d-flex gap-2 align-items-end">
+        <div class="flex-grow-1">
+          <textarea id="contenido" name="contenido" class="form-control" rows="1" placeholder="Escribe tu mensaje en {{ sala.nombre|lower }}..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary chat-send-btn" aria-label="Enviar mensaje" title="Enviar mensaje">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  </div>
+  </div>
+
+  <script>
+    (function () {
+      const mensajes = document.getElementById('chat-messages');
+      const textarea = document.getElementById('contenido');
+      const form = document.getElementById('chat-composer-form');
+      const fetchUrl = mensajes ? mensajes.dataset.fetchUrl : '';
+      const postUrl = mensajes ? mensajes.dataset.postUrl : '';
+      const csrfToken = (document.cookie.match(/(?:^|; )csrftoken=([^;]+)/) || [])[1] || '';
+      let latestMessageId = 0;
+
+      function isNearBottom(element) {
+        return element.scrollHeight - element.scrollTop - element.clientHeight < 80;
+      }
+
+      function scrollToBottom(element) {
+        element.scrollTop = element.scrollHeight;
+      }
+
+      function createActionButton(message, actionType) {
+        const formElement = document.createElement('form');
+        formElement.method = 'post';
+        formElement.action = postUrl;
+        formElement.className = 'm-0';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        formElement.appendChild(csrfInput);
+
+        const accionInput = document.createElement('input');
+        accionInput.type = 'hidden';
+        accionInput.name = 'accion';
+        accionInput.value = actionType;
+        formElement.appendChild(accionInput);
+
+        const mensajeIdInput = document.createElement('input');
+        mensajeIdInput.type = 'hidden';
+        mensajeIdInput.name = 'mensaje_id';
+        mensajeIdInput.value = message.id;
+        formElement.appendChild(mensajeIdInput);
+
+        if (actionType === 'reportar_mensaje') {
+          const razonInput = document.createElement('input');
+          razonInput.type = 'hidden';
+          razonInput.name = 'razon';
+          razonInput.value = 'Mensaje reportado desde la sala.';
+          formElement.appendChild(razonInput);
+        }
+
+        const button = document.createElement('button');
+        button.type = 'submit';
+        button.className = 'chat-icon-btn danger';
+        button.setAttribute('aria-label', actionType === 'borrar_mensaje' ? 'Borrar mensaje' : 'Reportar mensaje');
+        button.title = actionType === 'borrar_mensaje' ? 'Borrar mensaje' : 'Reportar mensaje';
+        if (actionType === 'borrar_mensaje') {
+          button.addEventListener('click', function (event) {
+            if (!confirm('¿Borrar tu mensaje?')) {
+              event.preventDefault();
+            }
+          });
+        }
+
+        const icon = document.createElement('i');
+        icon.className = actionType === 'borrar_mensaje' ? 'bi bi-trash3-fill' : 'bi bi-flag-fill';
+        button.appendChild(icon);
+        formElement.appendChild(button);
+        return formElement;
+      }
+
+      function buildMessageElement(message) {
+        const row = document.createElement('div');
+        row.className = `chat-bubble-row ${message.es_propio ? 'mine' : 'theirs'}`;
+        row.dataset.messageId = String(message.id);
+        row.dataset.ownMessage = message.es_propio ? 'true' : 'false';
+
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${message.es_propio ? 'mine' : 'theirs'}${message.es_propio ? '' : ' chat-card-surface'}`;
+
+        const header = document.createElement('div');
+        header.className = 'chat-bubble-header';
+
+        const title = document.createElement('div');
+        title.className = 'chat-bubble-title';
+
+        const author = document.createElement('div');
+        author.className = 'chat-author';
+        author.textContent = message.es_propio ? 'Tú' : message.usuario;
+        title.appendChild(author);
+
+        header.appendChild(title);
+        if (!message.es_propio) {
+          header.appendChild(createActionButton(message, 'reportar_mensaje'));
+        }
+
+        const body = document.createElement('p');
+        body.className = 'chat-bubble-body';
+        body.textContent = message.contenido;
+
+        const footer = document.createElement('div');
+        footer.className = 'chat-bubble-footer';
+
+        const time = document.createElement('span');
+        time.className = 'chat-time';
+        time.textContent = message.creado_en;
+        footer.appendChild(time);
+
+        bubble.appendChild(header);
+        bubble.appendChild(body);
+        bubble.appendChild(footer);
+        row.appendChild(bubble);
+        return row;
+      }
+
+      function updateLatestMessageId() {
+        const rows = mensajes.querySelectorAll('[data-message-id]');
+        const lastRow = rows.length ? rows[rows.length - 1] : null;
+        latestMessageId = lastRow ? parseInt(lastRow.dataset.messageId, 10) || 0 : 0;
+      }
+
+      async function fetchNewMessages() {
+        if (!fetchUrl || !mensajes) {
+          return;
+        }
+
+        const shouldStickToBottom = isNearBottom(mensajes);
+        const url = new URL(fetchUrl, window.location.origin);
+        url.searchParams.set('last_id', String(latestMessageId));
+
+        try {
+          const response = await fetch(url.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+          });
+
+          if (!response.ok) {
+            return;
+          }
+
+          const data = await response.json();
+          const nuevos = Array.isArray(data.mensajes) ? data.mensajes : [];
+          if (!nuevos.length) {
+            return;
+          }
+
+          const fragment = document.createDocumentFragment();
+          nuevos.forEach((message) => {
+            fragment.appendChild(buildMessageElement(message));
+            latestMessageId = message.id;
+          });
+
+          mensajes.appendChild(fragment);
+          if (shouldStickToBottom) {
+            scrollToBottom(mensajes);
+          }
+        } catch (error) {
+          return;
+        }
+      }
+
+      if (mensajes) {
+        updateLatestMessageId();
+        scrollToBottom(mensajes);
+      }
+
+      if (textarea && form) {
+        textarea.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            if (textarea.value.trim()) {
+              if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+              } else {
+                form.submit();
+              }
+            }
+          }
+        });
+      }
+
+      if (mensajes) {
+        setInterval(fetchNewMessages, 4000);
+      }
+    })();
+  </script>
+{% endblock %}
