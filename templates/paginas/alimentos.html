@@ -255,6 +255,10 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" form="formEditarAlimento" class="btn btn-sm btn-success">Confirmar cambios</button>
+        <form id="formBorrarAlimento" method="post" action="" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-danger ms-2" onclick="return confirm('¿Seguro que quieres borrar este alimento?');">Borrar</button>
+        </form>
       </div>
     </div>
   </div>
@@ -269,6 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(respuesta => respuesta.json())
         .then(datos => {
           document.getElementById('formEditarAlimento').action = `/alimentos/${id}/editar/`;
+          document.getElementById('formBorrarAlimento').action = `/alimentos/${id}/eliminar/`;
           document.getElementById('editar_id').value = datos.id;
           document.getElementById('editar_nombre').value = datos.nombre;
           document.getElementById('editar_marca').value = datos.marca;

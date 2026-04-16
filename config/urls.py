@@ -26,6 +26,7 @@ from config.views import (
     eliminar_usuario,
     editar_alimento,
 )
+from config.views import eliminar_alimento
 
 
 urlpatterns = [
@@ -50,6 +51,7 @@ urlpatterns = [
     path("alimentos/", alimentos, name="alimentos"),
     path("alimentos/<int:id>/detalle/", alimentos_detalle, name="alimentos_detalle"),
     path("alimentos/<int:id>/editar/", editar_alimento, name="editar_alimento"),
+    path("alimentos/<int:id>/eliminar/", eliminar_alimento, name="eliminar_alimento"),
     path("panel-admin/incidencias/", admin_incidencias, name="admin_incidencias"),
     path("panel-admin/chat/", admin_chat, name="admin_chat"),
     path("panel-admin/usuarios/", admin_usuarios, name="admin_usuarios"),
