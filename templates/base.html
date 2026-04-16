@@ -128,7 +128,6 @@
         </div>
       </div>
       {% if request.user.is_authenticated %}
-            <!-- Navegación móvil inferior solo con iconos principales -->
             <nav class="navbar fixed-bottom bg-body-tertiary d-lg-none border-top">
               <div class="container d-flex justify-content-around align-items-center">
                 <a href="{% url 'alimentos' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'alimentos' %} active fw-bold text-primary{% endif %}"><i class="bi bi-egg-fried"></i><div style="font-size:0.8rem;">Alimentos</div></a>
@@ -167,7 +166,6 @@
     })();
   </script>
   {% if request.user.is_authenticated %}
-    <!-- Modal para reportar problema -->
     <div class="modal fade" id="reportarProblemaModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

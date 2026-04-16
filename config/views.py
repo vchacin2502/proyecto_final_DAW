@@ -1,36 +1,25 @@
 def a_flotante_o_none(valor):
     try:
-        # Permitir comas como separador decimal
         if isinstance(valor, str):
             valor = valor.replace(",", ".")
         return float(valor)
     except (ValueError, TypeError):
         return None
-# Helper para contexto de calendario mensual en estadísticas
 def _build_calendar_context(request, historial_comidas, datos_perfil):
-    # Obtener mes y año seleccionados o actuales
-
     today = date.today()
     month = int(request.GET.get("month", today.month))
     year = int(request.GET.get("year", today.year))
-    # Día seleccionado (opcional, puede venir como fecha completa)
     day_param = request.GET.get("day", str(today.day))
     try:
         if "-" in day_param:
-            # Si viene como fecha completa (YYYY-MM-DD)
             selected_day = int(day_param.split("-")[-1])
         else:
             selected_day = int(day_param)
     except Exception:
         selected_day = today.day
-
-    # Generar matriz de días del mes
     cal = calendar.Calendar(firstweekday=0)
     month_days = cal.monthdatescalendar(year, month)
-
-    # Mapear historial de comidas por fecha
     comidas_por_fecha = {c["fecha_comida"][:10]: c for c in historial_comidas}
-
     calendar_grid = []
     for week in month_days:
         week_row = []
@@ -50,14 +39,10 @@ def _build_calendar_context(request, historial_comidas, datos_perfil):
                 "parametro_mes": month,
             })
         calendar_grid.append(week_row)
-
-    # Navegación de meses
     prev_month = month - 1 if month > 1 else 12
     prev_year = year if month > 1 else year - 1
     next_month = month + 1 if month < 12 else 1
     next_year = year if month < 12 else year + 1
-
-    # Día seleccionado: buscar datos
     # Buscar todas las comidas del día seleccionado
     seleccion_tiene_datos = False
     comidas_dia = []
@@ -107,7 +92,6 @@ from .models import Alimento
 
 @login_required
 @require_POST
-# Restaurar helpers de calendario y estadísticas (excepto colores de avance)
 def eliminar_alimento(request, id):
     alimento = get_object_or_404(Alimento, id=id, usuario=request.user)
     alimento.delete()
@@ -230,7 +214,6 @@ MESES_EN_ESPANOL = [
 ]
 
 
-# Salas de chat simplificadas, solo con slug y nombre
 CHAT_ROOMS = {
     "general": {
         "slug": "general",
@@ -265,7 +248,6 @@ def _calcular_calorias(datos_perfil):
     peso = a_flotante_o_none(datos_perfil.get("peso"))
     sexo = datos_perfil.get("sexo", "Hombre")
     objetivo = datos_perfil.get("objetivo", "Mantener peso")
-    # Normalizar objetivo a los textos correctos
     if objetivo == "bajar_peso":
         objetivo = "Bajar de peso"
     elif objetivo == "mantener_peso":
@@ -296,7 +278,6 @@ def _calcular_macros_objetivo(calorias, objetivo):
     if not calorias:
         return {"meta_proteinas": 0, "meta_grasas": 0, "meta_carbohidratos": 0}
 
-    # Normalizar objetivo a los textos correctos
     if objetivo == "bajar_peso":
         objetivo = "Bajar de peso"
     elif objetivo == "mantener_peso":
@@ -440,7 +421,6 @@ def _asegurar_salas_chat():
         )
         if sala.nombre != definicion["name"]:
             sala.nombre = definicion["name"]
-            # sala.descripcion = definicion["description"]
             sala.save(update_fields=["nombre"])
         salas.append(sala)
     return salas
@@ -571,7 +551,6 @@ def chat_sala(request, sala_slug):
                             "puede_reportar": False,
                         }
                     })
-            # else innecesario eliminado, ya cubierto arriba
         elif accion == "reportar_mensaje":
             mensaje_id_raw = request.POST.get("mensaje_id", "")
             razon = request.POST.get("razon", "Mensaje reportado desde la sala.")
@@ -583,7 +562,6 @@ def chat_sala(request, sala_slug):
             if not razon or not razon.strip():
                 messages.error(request, "La razón del reporte no puede estar vacía.")
                 return redirect(request.path)
-            # Aquí iría la lógica real de reporte (crear incidencia, etc.)
             messages.success(request, "Mensaje reportado correctamente.")
         elif accion == "borrar_mensaje":
             mensaje_id_raw = request.POST.get("mensaje_id", "")
@@ -592,7 +570,6 @@ def chat_sala(request, sala_slug):
             except (ValueError, TypeError):
                 messages.error(request, "ID de mensaje no válido.")
                 return redirect(request.path)
-            # Aquí iría la lógica real de borrado
             messages.success(request, "Mensaje borrado correctamente.")
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse({"ok": True})
