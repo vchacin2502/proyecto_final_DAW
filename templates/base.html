@@ -65,17 +65,19 @@
     {% else %}
       <nav class="navbar navbar-expand-lg bg-body-tertiary rounded mb-3">
         <div class="container-fluid">
-          <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-            <img src="{% static 'img/Logo.png' %}" alt="CaFit" style="height:38px;">
-          </a>
-          {% if request.user.is_authenticated %}
-            <div class="collapse navbar-collapse">
-              <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a href="{% url 'alimentos' %}" class="nav-link{% if request.resolver_match.url_name == 'alimentos' %} active{% endif %}">Alimentos <i class="bi bi-egg-fried"></i></a></li>
-                <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}">Dashboard <i class="bi bi-speedometer2"></i></a></li>
-                <li class="nav-item"><a href="{% url 'chat' %}" class="nav-link{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active{% endif %}">Chat <i class="bi bi-chat-dots"></i></a></li>
-              </ul>
-              <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center justify-content-between flex-nowrap w-100">
+            <a class="navbar-brand fw-bold m-0" href="{% url 'dashboard' %}">
+              <img src="{% static 'img/Logo.png' %}" alt="CaFit" style="height:38px;">
+            </a>
+            {% if request.user.is_authenticated %}
+              <div class="d-none d-lg-flex flex-grow-1 justify-content-center">
+                <ul class="navbar-nav mb-2 mb-lg-0 flex-row gap-3">
+                  <li class="nav-item"><a href="{% url 'alimentos' %}" class="nav-link{% if request.resolver_match.url_name == 'alimentos' %} active{% endif %}">Alimentos <i class="bi bi-egg-fried"></i></a></li>
+                  <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}">Dashboard <i class="bi bi-speedometer2"></i></a></li>
+                  <li class="nav-item"><a href="{% url 'chat' %}" class="nav-link{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active{% endif %}">Chat <i class="bi bi-chat-dots"></i></a></li>
+                </ul>
+              </div>
+              <div class="d-flex align-items-center gap-2 ms-2">
                 <div class="dropdown">
                   <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Abrir menu de usuario">
                     <i class="bi bi-person-circle"></i>
@@ -126,13 +128,14 @@
         </div>
       </div>
       {% if request.user.is_authenticated %}
-        <nav class="navbar fixed-bottom bg-body-tertiary d-lg-none border-top">
-          <div class="container d-flex justify-content-around">
-            <a href="{% url 'alimentos' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'alimentos' %} active fw-bold text-primary{% endif %}"><i class="bi bi-egg-fried"></i><div style="font-size:0.8rem;">Alimentos</div></a>
-            <a href="{% url 'dashboard' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'dashboard' %} active fw-bold text-primary{% endif %}"><i class="bi bi-speedometer2"></i><div style="font-size:0.8rem;">Dashboard</div></a>
-            <a href="{% url 'chat' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active fw-bold text-primary{% endif %}"><i class="bi bi-chat-dots"></i><div style="font-size:0.8rem;">Chat</div></a>
-          </div>
-        </nav>
+            <!-- Navegación móvil inferior solo con iconos principales -->
+            <nav class="navbar fixed-bottom bg-body-tertiary d-lg-none border-top">
+              <div class="container d-flex justify-content-around align-items-center">
+                <a href="{% url 'alimentos' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'alimentos' %} active fw-bold text-primary{% endif %}"><i class="bi bi-egg-fried"></i><div style="font-size:0.8rem;">Alimentos</div></a>
+                <a href="{% url 'dashboard' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'dashboard' %} active fw-bold text-primary{% endif %}"><i class="bi bi-speedometer2"></i><div style="font-size:0.8rem;">Dashboard</div></a>
+                <a href="{% url 'chat' %}" class="nav-link text-center{% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'chat_sala' %} active fw-bold text-primary{% endif %}"><i class="bi bi-chat-dots"></i><div style="font-size:0.8rem;">Chat</div></a>
+              </div>
+            </nav>
       {% endif %}
     {% endif %}
   </main>

@@ -2,197 +2,67 @@
 
 {% block titulo %}Panel admin{% endblock %}
 
+
 {% block contenido %}
   <style>
-    .admin-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 2rem;
+    .admin-card-link:hover .surface-soft {
+      box-shadow: 0 0.5rem 1.2rem rgba(31,122,140,0.13);
+      transform: translateY(-2px) scale(1.015);
+      transition: box-shadow 0.18s, transform 0.18s;
     }
-
-    .admin-header i {
-      font-size: 1.75rem;
-      color: var(--bs-primary);
-    }
-
-    .admin-header .h3 {
-      margin: 0;
-    }
-
-    .stat-card {
-      background: linear-gradient(135deg, var(--bs-primary), var(--bs-info));
-      color: white;
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: block;
-      height: 100%;
-      border: 1.5px solid #b0b8be !important;
-      box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
-    }
-    
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      color: white;
-      text-decoration: none;
-    }
-    
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      line-height: 1;
-    }
-    
-    .stat-label {
-      font-size: 0.9rem;
-      opacity: 0.95;
-      font-weight: 500;
-    }
-    
-    .module-card {
-      border: 1.5px solid #b0b8be !important;
-      border-radius: 0.75rem;
-      box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
-      transition: all 0.2s ease;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: #f8fafc;
-    }
-    
-    .module-card:hover {
-      border-color: var(--bs-primary);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    [data-bs-theme="dark"] .stat-card, [data-bs-theme="dark"] .module-card {
-      border: 1.5px solid #3a4957 !important;
-      background: #232b36;
-      color: #e9f2fb;
-    }
-    
-    .module-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: var(--bs-primary);
-    }
-
-    .module-card h2 {
-      color: var(--app-text);
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-
-    .module-card p {
-      flex-grow: 1;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-    }
-
-    .module-card .text-primary {
-      color: var(--bs-primary) !important;
-    }
-
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .quick-actions .btn {
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 576px) {
-      .admin-header {
-        gap: 0.5rem;
-      }
-
-      .admin-header i {
-        font-size: 1.5rem;
-      }
-
-      .stat-card {
-        padding: 1.25rem;
-      }
-
-      .stat-number {
-        font-size: 2rem;
-      }
-
-      .stat-label {
-        font-size: 0.85rem;
-      }
-
-      .module-icon {
-        font-size: 2rem;
-      }
-
-      .quick-actions .btn {
-        font-size: 0.85rem;
-        padding: 0.4rem 0.75rem;
-      }
+    .admin-card-link .surface-soft {
+      transition: box-shadow 0.18s, transform 0.18s;
     }
   </style>
 
-  <div class="admin-header">
-    <i class="bi bi-speedometer2"></i>
-    <h1 class="page-title h3">Panel de Administración</h1>
+
+
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <h1 class="page-title h3 mb-0">Panel de administración</h1>
+    <i class="bi bi-gear fs-3 text-primary"></i>
   </div>
     
   <!-- Estadísticas rápidas -->
   <div class="row g-3 mb-5">
-    <div class="col-12 col-sm-6 col-lg-4">
-      <div class="stat-card" style="cursor:default;box-shadow:none;transform:none;">
-        <div class="stat-number">{{ total_incidencias }}</div>
-        <div class="stat-label">Incidencias abiertas</div>
+    <div class="col-12 col-md-4">
+      <div class="surface-soft border rounded-3 p-4 text-center h-100">
+        <div class="fs-2 fw-bold mb-1">{{ total_incidencias }}</div>
+        <div class="fw-semibold">Incidencias abiertas</div>
       </div>
     </div>
-    <div class="col-12 col-sm-6 col-lg-4">
-      <div class="stat-card" style="cursor:default;box-shadow:none;transform:none;">
-        <div class="stat-number">{{ mensajes_reportados }}</div>
-        <div class="stat-label">Mensajes reportados</div>
+    <div class="col-12 col-md-4">
+      <div class="surface-soft border rounded-3 p-4 text-center h-100">
+        <div class="fs-2 fw-bold mb-1">{{ mensajes_reportados }}</div>
+        <div class="fw-semibold">Mensajes reportados</div>
       </div>
     </div>
-    <div class="col-12 col-sm-6 col-lg-4">
-      <a href="{% url 'admin_usuarios' %}" class="stat-card text-decoration-none">
-        <div class="stat-number">{{ usuarios_activos }}</div>
-        <div class="stat-label">Usuarios en plataforma</div>
+    <div class="col-12 col-md-4">
+      <a href="{% url 'admin_usuarios' %}" class="d-block text-decoration-none h-100 admin-card-link">
+        <div class="surface-soft border rounded-3 p-4 text-center h-100 text-body">
+          <div class="fs-2 fw-bold mb-1">{{ usuarios_activos }}</div>
+          <div class="fw-semibold">Usuarios en plataforma</div>
+        </div>
       </a>
     </div>
   </div>
 
   <!-- Módulos de administración -->
   <div class="row g-4 mb-5">
-    <!-- Incidencias -->
-    <div class="col-12 col-lg-6">
-      <a href="{% url 'admin_incidencias' %}" class="text-decoration-none">
-        <div class="module-card p-4">
-          <div class="module-icon">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-          </div>
-          <h2 class="h5 mb-2">Incidencias</h2>
-          <p class="mb-3 text-secondary">Revisa y gestiona los reportes de problemas de usuarios.</p>
-          <small class="text-primary fw-bold"><i class="bi bi-arrow-right"></i></small>
+    <div class="col-12 col-md-6">
+      <a href="{% url 'admin_incidencias' %}" class="d-block text-decoration-none h-100 admin-card-link">
+        <div class="surface-soft border rounded-3 p-4 h-100 d-flex flex-column align-items-center justify-content-center">
+          <div class="fs-1 mb-2 text-primary"><i class="bi bi-exclamation-triangle-fill"></i></div>
+          <div class="fw-semibold fs-4 mb-1">Incidencias</div>
+          <div class="small text-secondary text-center">Revisa y gestiona los reportes de problemas de usuarios.</div>
         </div>
       </a>
     </div>
-    <!-- Chat -->
-    <div class="col-12 col-lg-6">
-      <a href="{% url 'admin_chat' %}" class="text-decoration-none">
-        <div class="module-card p-4">
-          <div class="module-icon">
-            <i class="bi bi-chat-dots"></i>
-          </div>
-          <h2 class="h5 mb-2">Moderación de Chat</h2>
-          <p class="mb-3 text-secondary">Elimina mensajes spam o inapropiados de las salas.</p>
-          <small class="text-primary fw-bold"><i class="bi bi-arrow-right"></i></small>
+    <div class="col-12 col-md-6">
+      <a href="{% url 'admin_chat' %}" class="d-block text-decoration-none h-100 admin-card-link">
+        <div class="surface-soft border rounded-3 p-4 h-100 d-flex flex-column align-items-center justify-content-center">
+          <div class="fs-1 mb-2 text-primary"><i class="bi bi-chat-dots"></i></div>
+          <div class="fw-semibold fs-4 mb-1">Moderación de Chat</div>
+          <div class="small text-secondary text-center">Elimina mensajes spam o inapropiados de las salas.</div>
         </div>
       </a>
     </div>

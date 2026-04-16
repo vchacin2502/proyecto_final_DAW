@@ -612,7 +612,7 @@ def chat(request):
 
 @login_required
 def chat_sala(request, sala_slug):
-    clean_old_messages()
+
     
     sala = _obtener_sala_chat(sala_slug)
     if not sala:
@@ -626,10 +626,26 @@ def chat_sala(request, sala_slug):
                 "El mensaje",
             )
             if error:
+                if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                    return JsonResponse({"error": error}, status=400)
                 messages.error(request, error)
             elif contenido:
-                MensajeChat.objects.create(sala=sala, usuario=request.user, contenido=contenido)
+                mensaje = MensajeChat.objects.create(sala=sala, usuario=request.user, contenido=contenido)
+                if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                    return JsonResponse({
+                        "mensaje": {
+                            "id": mensaje.id,
+                            "usuario": mensaje.usuario.username if mensaje.usuario else "Anonimo",
+                            "contenido": mensaje.contenido,
+                            "creado_en": localtime(mensaje.creado_en).strftime("%H:%M"),
+                            "es_propio": True,
+                            "puede_borrar": True,
+                            "puede_reportar": False,
+                        }
+                    })
             else:
+                if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                    return JsonResponse({"error": "Escribe un mensaje antes de enviarlo."}, status=400)
                 messages.error(request, "Escribe un mensaje antes de enviarlo.")
         elif accion == "reportar_mensaje":
             mensaje_id, error_id = _validar_entero_formulario(request.POST.get("mensaje_id", ""), "El mensaje reportado")
@@ -659,6 +675,8 @@ def chat_sala(request, sala_slug):
                     messages.success(request, "Mensaje borrado.")
                 else:
                     messages.error(request, "No puedes borrar ese mensaje.")
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({"ok": True})
         return redirect("chat_sala", sala_slug=sala.slug)
 
     mensajes = MensajeChat.objects.filter(

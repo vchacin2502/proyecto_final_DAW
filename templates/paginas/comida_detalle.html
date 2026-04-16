@@ -7,39 +7,50 @@
     .resumen-comida {
       position: sticky;
       top: 1rem;
+      border: 2px solid #b0b8be;
+      border-radius: 0.7rem;
+      background: #fff;
     }
-
-    .resumen-lista {
-      max-height: 240px;
-      overflow: auto;
+    [data-bs-theme="dark"] .resumen-comida {
+      border: 2px solid #3a4957;
+      background: #232b36;
     }
-
-    .catalogo-toolbar .form-control {
-      max-width: 420px;
-    }
-
+    .resumen-lista { max-height: 240px; overflow: auto; }
+    .catalogo-toolbar .form-control { max-width: 420px; }
     .resumen-macros-box {
-      border: 1.5px solid #b0b8be !important;
+      border: 2px solid #b0b8be;
       border-radius: 0.7rem;
       background: #fff;
       color: #212529;
     }
-
     [data-bs-theme="dark"] .resumen-macros-box {
-      border: 1.5px solid #3a4957 !important;
+      border: 2px solid #3a4957;
       background: #232b36;
       color: #e9f2fb;
     }
-
     @media (max-width: 576px) {
-      .catalogo-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+      .catalogo-toolbar { flex-direction: column; align-items: stretch; }
+      .catalogo-toolbar .form-control { max-width: none; }
+      .surface-soft, .resumen-comida { padding: 1rem !important; }
+      .tabla-scrollable {
+        max-height: 260px;
+        overflow-y: auto;
+        overflow-x: auto;
+        width: 100%;
+        min-width: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-
-      .catalogo-toolbar .form-control {
-        max-width: none;
+      .table {
+        width: 100%;
+        table-layout: auto;
       }
+      .table td, .table th {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+      h2.h5, .btn, .page-title, .page-subtitle { white-space: normal !important; word-break: break-word; }
+      .row.g-4 { --bs-gutter-x: 0.5rem; }
     }
   </style>
 
@@ -63,7 +74,7 @@
         {% if modo_edicion and items_existentes %}
           <div class="surface-soft p-3 p-md-4 mb-4">
             <h2 class="h5 mb-3">Alimentos actuales</h2>
-            <div class="table-responsive">
+            <div class="tabla-scrollable">
               <table class="table table-hover align-middle bg-white mb-0">
                 <thead>
                   <tr>
@@ -124,7 +135,7 @@
               aria-label="Buscar alimento en el catalogo"
             >
           </div>
-          <div class="table-responsive">
+          <div class="tabla-scrollable">
             <table class="table table-hover align-middle bg-white mb-0">
               <thead>
                 <tr>
