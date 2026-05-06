@@ -142,7 +142,7 @@
                 <small>{{ item.user.email|default:"Sin email" }}</small>
               </td>
               <td>
-                <form method="POST" action="{% url 'eliminar_usuario' item.user.id %}" style="display:inline;">
+                <form method="POST" action="{% url 'eliminar_usuario' item.user.id %}" class="d-inline">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Seguro que deseas eliminar este usuario?');">
                     <i class="bi bi-trash"></i> Borrar

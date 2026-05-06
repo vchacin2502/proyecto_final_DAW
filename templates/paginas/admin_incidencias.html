@@ -128,7 +128,7 @@
               <td><small>{% if inc.reportero %}{{ inc.reportero.username }}{% else %}Usuario eliminado{% endif %}</small></td>
               <td><small>{{ inc.razon|slice:':80' }}{% if inc.razon|length > 80 %}...{% endif %}</small></td>
               <td>
-                <form method="POST" style="display:inline;">
+                <form method="POST" class="d-inline">
                   {% csrf_token %}
                   <input type="hidden" name="incidencia_id" value="{{ inc.id }}">
                   <button type="submit" name="accion" value="eliminar" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Seguro que deseas eliminar este reporte?');">

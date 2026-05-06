@@ -69,7 +69,7 @@
                 <small>{{ inc.mensaje.contenido|truncatewords:20 }}</small>
               </td>
               <td>
-                <form method="POST" style="display:inline;">
+                <form method="POST" class="d-inline">
                   {% csrf_token %}
                   <input type="hidden" name="mensaje_id" value="{{ inc.mensaje.id }}">
                   <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Seguro que deseas eliminar este mensaje?');">

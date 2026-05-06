@@ -106,10 +106,10 @@
                         <div class="small text-secondary">{{ item.marca }}</div>
                       </td>
                       <td>{{ item.kcal }}</td>
-                      <td style="min-width: 120px;">
+                      <td class="min-width-actions">
                         <input type="number" step="0.1" class="form-control form-control-sm resumen-cantidad-existente" name="existing_qty_{{ forloop.counter0 }}" value="{{ item.cantidad }}">
                       </td>
-                      <td style="min-width: 110px;">
+                      <td class="min-width-qty">
                         <select class="form-select form-select-sm resumen-unidad-existente" name="existing_unit_{{ forloop.counter0 }}">
                           <option value="g" {% if item.unidad == 'g' %}selected{% endif %}>g</option>
                           <option value="ml" {% if item.unidad == 'ml' %}selected{% endif %}>ml</option>
@@ -180,10 +180,10 @@
                     <td>{{ food.azucares }}</td>
                     <td>{{ food.grasas }}</td>
                     <td>{{ food.saturadas }}</td>
-                    <td style="min-width: 110px;">
+                    <td class="min-width-qty">
                       <input type="number" step="0.1" class="form-control form-control-sm resumen-cantidad-nueva" name="qty_food_{{ food.id }}">
                     </td>
-                    <td style="min-width: 100px;">
+                    <td class="min-width-cal">
                       <select class="form-select form-select-sm resumen-unidad-nueva" name="unit_food_{{ food.id }}">
                         <option value="g">g</option>
                         <option value="ml">ml</option>

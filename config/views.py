@@ -1190,17 +1190,34 @@ def borrar_comida(request, indice_comida):
 @login_required
 def alimentos(request):
     if request.method == "POST":
-        nombre = request.POST.get("nombre", "")
-        marca = request.POST.get("marca", "")
+        nombre = request.POST.get("nombre", "").strip()
+        marca = request.POST.get("marca", "").strip()
         unidad = request.POST.get("unidad", "g")
         cantidad_referencia = float(request.POST.get("cantidad_ref", "100") or 0)
-        kcal_ref = float(request.POST.get("kcal_ref_form", "") or 0)
-        proteinas_ref = float(request.POST.get("prot_ref_form", "") or 0)
-        carbohidratos_ref = float(request.POST.get("carb_ref_form", "") or 0)
-        grasas_ref = float(request.POST.get("gras_ref_form", "") or 0)
-        azucares_ref = float(request.POST.get("azucar_ref_form", "") or 0)
-        saturadas_ref = float(request.POST.get("gras_sat_ref_form", "") or 0)
-        # Validaciones simples ya cubiertas arriba. Si hay errores, solo mostrar mensaje y redirigir.
+        kcal = float(request.POST.get("kcal_ref_form", "") or 0)
+        proteinas = float(request.POST.get("prot_ref_form", "") or 0)
+        carbohidratos = float(request.POST.get("carb_ref_form", "") or 0)
+        grasas = float(request.POST.get("gras_ref_form", "") or 0)
+        azucares = float(request.POST.get("azucar_ref_form", "") or 0)
+        saturadas = float(request.POST.get("gras_sat_ref_form", "") or 0)
+        
+        # Validar que el nombre no esté vacío
+        if nombre:
+            # Crear el alimento con los nombres correctos de campos
+            Alimento.objects.create(
+                usuario=request.user,
+                nombre=nombre,
+                marca=marca,
+                unidad=unidad,
+                cantidad_referencia=cantidad_referencia,
+                kcal=kcal,
+                proteinas=proteinas,
+                carbohidratos=carbohidratos,
+                grasas=grasas,
+                azucares=azucares,
+                saturadas=saturadas,
+            )
+            return redirect("alimentos")
 
     busqueda = request.GET.get("q", "").strip()
     alimentos_qs = Alimento.objects.filter(usuario=request.user)

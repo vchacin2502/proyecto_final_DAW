@@ -253,7 +253,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" form="formEditarAlimento" class="btn btn-sm btn-success">Confirmar cambios</button>
-        <form id="formBorrarAlimento" method="post" action="" style="display:inline;">
+        <form id="formBorrarAlimento" method="post" action="" class="d-inline">
           {% csrf_token %}
           <button type="submit" class="btn btn-sm btn-danger ms-2" onclick="return confirm('¿Seguro que quieres borrar este alimento?');">Borrar</button>
         </form>

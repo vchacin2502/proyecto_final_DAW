@@ -1,0 +1,723 @@
+/* ============================================================================
+   CaFit CSS - Sistema de diseño completo
+   Soporte para tema oscuro/claro con mejoras de accesibilidad
+   ============================================================================ */
+
+:root {
+  /* Colores principales */
+  --primary-color: #1f7a8c;
+  --primary-dark: #1a232b;
+  --primary-hover: #175a6f;
+  --border-light: #b0b8be;
+  --shadow-light: rgba(31, 122, 140, 0.07);
+  --shadow-dark: rgba(16, 30, 54, 0.08);
+  
+  /* Colores de texto */
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  
+  /* Transiciones */
+  --transition-fast: 0.12s ease;
+  --transition-smooth: 0.3s ease;
+  
+  /* Border radius */
+  --border-radius-sm: 0.75rem;
+  --border-radius-md: 1.25rem;
+  --border-radius-lg: 1.5rem;
+}
+
+/* Tema oscuro */
+[data-bs-theme="dark"] {
+  --border-light: #3a4957;
+  --text-primary: #f8f9fa;
+  --text-secondary: #b4c0cc;
+  --shadow-light: rgba(0, 0, 0, 0.34);
+  --bg-dark: #181c22;
+}
+
+/* ============================================================================
+   BODY Y ELEMENTOS BASE
+   ============================================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body,
+.card,
+.navbar,
+.modal-content {
+  color: var(--text-primary);
+}
+
+body {
+  transition: background-color var(--transition-smooth);
+}
+
+.card,
+.modal-content {
+  border: 1.5px solid var(--border-light) !important;
+  box-shadow: 0 0.5rem 1.2rem var(--shadow-light);
+  transition: border-color var(--transition-smooth), 
+              box-shadow var(--transition-smooth),
+              transform var(--transition-smooth);
+}
+
+/* Borde más redondeado en cards y modales */
+.card,
+.modal-content {
+  border-radius: var(--border-radius-lg);
+}
+
+.card:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 0.5rem 1.5rem var(--shadow-light);
+}
+
+.navbar {
+  border: 1.5px solid var(--border-light) !important;
+  transition: border-color var(--transition-smooth);
+}
+
+/* ============================================================================
+   NAVEGACIÓN
+   ============================================================================ */
+
+.nav-link,
+.dropdown-item,
+.navbar-brand {
+  color: var(--primary-dark) !important;
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast);
+}
+
+[data-bs-theme="dark"] .nav-link,
+[data-bs-theme="dark"] .dropdown-item,
+[data-bs-theme="dark"] .navbar-brand {
+  color: #e9f2fb !important;
+}
+
+.nav-link.active,
+.dropdown-item.active,
+.navbar-brand.active {
+  color: #fff !important;
+  background: var(--primary-color) !important;
+  display: inline-block;
+  border-radius: calc(var(--border-radius-lg) + 0.25rem);
+  padding: 0.35rem 0.7rem;
+  box-shadow: 0 4px 12px rgba(31,122,140,0.12);
+  transition: background-color 0.12s ease, transform 0.12s ease;
+}
+
+/* Guaoa animation: pop + shimmer for active nav item */
+@keyframes guaoaPop {
+  0% { transform: scale(1); box-shadow: none; }
+  40% { transform: scale(1.08); box-shadow: 0 10px 24px rgba(31,122,140,0.18); }
+  100% { transform: scale(1); box-shadow: 0 6px 16px rgba(31,122,140,0.12); }
+}
+
+@keyframes guaoaShine {
+  0% { left: -60%; }
+  100% { left: 160%; }
+}
+
+.nav-link.active,
+.navbar-brand.active {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link.active.guaoa,
+.navbar-brand.active.guaoa {
+  animation: guaoaPop 420ms cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+.nav-link.active.guaoa::after,
+.navbar-brand.active.guaoa::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-20deg);
+  animation: guaoaShine 900ms ease forwards;
+  pointer-events: none;
+}
+
+[data-bs-theme="dark"] .nav-link.active.guaoa::after,
+[data-bs-theme="dark"] .navbar-brand.active.guaoa::after {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+}
+
+.nav-link {
+  border-radius: var(--border-radius-md) !important;
+  padding: 0.35rem 0.7rem !important;
+  transition: background-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.nav-link:hover,
+.dropdown-item:hover {
+  background-color: rgba(31, 122, 140, 0.1);
+  box-shadow: 0 2px 8px rgba(31,122,140,0.08);
+  transform: translateY(-1px);
+  transition: background-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+[data-bs-theme="dark"] .nav-link:hover,
+[data-bs-theme="dark"] .dropdown-item:hover {
+  background-color: rgba(130, 211, 227, 0.15);
+  box-shadow: 0 2px 8px rgba(130,211,227,0.12);
+}
+
+.dropdown-menu {
+  border: 1px solid var(--border-light);
+  box-shadow: 0 0.5rem 1.2rem var(--shadow-light);
+  border-radius: var(--border-radius-md);
+}
+
+/* ============================================================================
+   TEXTOS
+   ============================================================================ */
+
+.text-muted,
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+/* ============================================================================
+   FORMULARIOS E INPUTS
+   ============================================================================ */
+
+.form-control,
+.form-select {
+  border-color: var(--border-light);
+  transition: border-color var(--transition-smooth),
+              box-shadow var(--transition-smooth);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(31, 122, 140, 0.25);
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+  box-shadow: 0 0 0 0.25rem rgba(130, 211, 227, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.form-check-input {
+  border-color: var(--border-light);
+  width: 1.25em;
+  height: 1.25em;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(31, 122, 140, 0.25);
+}
+
+/* ============================================================================
+   BOTONES
+   ============================================================================ */
+
+.btn {
+  transition: all var(--transition-fast);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31, 122, 140, 0.3);
+}
+
+.btn-outline-secondary {
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(31, 122, 140, 0.1);
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary:hover {
+  background-color: rgba(130, 211, 227, 0.15);
+  border-color: #82d3e3;
+}
+
+.btn-danger:hover,
+.btn-outline-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-success:hover,
+.btn-outline-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+}
+
+/* ============================================================================
+   BADGES Y ETIQUETAS
+   ============================================================================ */
+
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+  cursor: default;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================================
+   ALERTAS
+   ============================================================================ */
+
+.alert {
+  border: 1px solid;
+  border-radius: var(--border-radius-md);
+  animation: slideIn var(--transition-smooth);
+  margin-bottom: 1rem;
+}
+
+.alert-info {
+  background-color: #cfe2ff;
+  border-color: #b6d4fe;
+  color: #084298;
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  border-color: #badbcc;
+  color: #0f5132;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c2c7;
+  color: #842029;
+}
+
+[data-bs-theme="dark"] .alert-info {
+  background-color: rgba(13, 110, 253, 0.15);
+  border-color: rgba(13, 110, 253, 0.5);
+  color: #6ea8fe;
+}
+
+[data-bs-theme="dark"] .alert-success {
+  background-color: rgba(25, 135, 84, 0.15);
+  border-color: rgba(25, 135, 84, 0.5);
+  color: #75b798;
+}
+
+[data-bs-theme="dark"] .alert-danger {
+  background-color: rgba(220, 53, 69, 0.15);
+  border-color: rgba(220, 53, 69, 0.5);
+  color: #ea868f;
+}
+
+/* ============================================================================
+   TABLAS
+   ============================================================================ */
+
+table {
+}
+
+table td {
+  vertical-align: middle;
+}
+
+table td.min-width-actions {
+  min-width: 120px;
+}
+
+table td.min-width-qty {
+  min-width: 110px;
+}
+
+table td.min-width-cal {
+  min-width: 100px;
+}
+
+.table-hover tbody tr {
+  transition: background-color var(--transition-smooth);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(31, 122, 140, 0.05);
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+  background-color: rgba(130, 211, 227, 0.1);
+}
+
+.table thead th {
+  font-weight: 600;
+  border-color: var(--border-light);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================================
+   MODALES
+   ============================================================================ */
+
+.modal-content {
+  /* Evitar animación de entrada en modales por defecto (mejor UX en recargas parciales) */
+  border-radius: var(--border-radius-lg);
+}
+
+.modal-header {
+  border-bottom: 2px solid var(--border-light);
+  padding: 1.25rem;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--border-light);
+  padding: 1rem;
+}
+
+.modal-title {
+  font-weight: 600;
+}
+
+/* ============================================================================
+   COMIDA - OPCIONES DE BLOQUE
+   ============================================================================ */
+
+:root {
+  --meal-option-border: rgba(31, 122, 140, 0.18);
+  --meal-option-bg-1: #f9fcff;
+  --meal-option-bg-2: #f0f7fa;
+  --meal-option-hover-border: #1f7a8c;
+  --meal-option-shadow: rgba(16, 30, 54, 0.08);
+}
+
+[data-bs-theme="dark"] {
+  --meal-option-border: rgba(148, 182, 209, 0.35);
+  --meal-option-bg-1: #1a2735;
+  --meal-option-bg-2: #223346;
+  --meal-option-hover-border: #82d3e3;
+  --meal-option-shadow: rgba(0, 0, 0, 0.34);
+}
+
+.meal-option {
+  border: 1px solid var(--meal-option-border);
+  border-radius: var(--border-radius-md);
+  background: linear-gradient(160deg, var(--meal-option-bg-1) 0%, var(--meal-option-bg-2) 100%);
+  color: inherit;
+  width: 100%;
+  padding: 1.25rem;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  text-align: left;
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast),
+              border-color var(--transition-fast);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.meal-option:hover,
+.meal-option:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--meal-option-hover-border);
+  box-shadow: 0 0.5rem 1rem var(--meal-option-shadow);
+  outline: none;
+}
+
+#meal-container {
+  height: fit-content;
+  margin-bottom: 3rem;
+  padding: 0 1rem;
+}
+
+/* ============================================================================
+   ICONOS Y UTILIDADES
+   ============================================================================ */
+
+.icon-info {
+  font-size: 1.2rem;
+  cursor: help;
+  transition: opacity var(--transition-smooth),
+              transform var(--transition-smooth);
+}
+
+.icon-info:hover {
+  opacity: 0.7;
+  transform: scale(1.1);
+}
+
+.logo-navbar {
+  height: 38px;
+  transition: transform var(--transition-smooth);
+}
+
+.logo-navbar:hover {
+  transform: scale(1.05);
+}
+
+.logo-auth {
+  height: 70px;
+  transition: transform var(--transition-smooth);
+}
+
+.logo-auth:hover {
+  transform: scale(1.02);
+}
+
+.auth-card {
+  max-width: 450px;
+}
+
+.bottom-nav-label {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   ANIMACIONES
+   ============================================================================ */
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 992px) {
+  .navbar {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0.75rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --border-radius-lg: 0.75rem;
+  }
+
+  .navbar {
+    margin-bottom: 1rem;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .meal-option {
+    padding: 0.875rem;
+  }
+  
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .table {
+    font-size: 0.875rem;
+  }
+  
+  table td.min-width-actions {
+    min-width: 100px;
+  }
+  
+  table td.min-width-qty {
+    min-width: 90px;
+  }
+  
+  table td.min-width-cal {
+    min-width: 80px;
+  }
+  
+  .modal-sm {
+    --bs-modal-width: 95vw;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 0.95rem;
+  }
+  
+  .card,
+  .modal-content {
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .meal-option {
+    padding: 0.75rem;
+  }
+  
+  .btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .form-control,
+  .form-select {
+    font-size: 16px;
+  }
+  
+  .table {
+    font-size: 0.75rem;
+  }
+}
+
+/* Fix para input en mobile - evitar zoom al hacer focus */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ============================================================================
+   ACCESIBILIDAD
+   ============================================================================ */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+[data-bs-theme="dark"] button:focus-visible,
+[data-bs-theme="dark"] a:focus-visible,
+[data-bs-theme="dark"] input:focus-visible,
+[data-bs-theme="dark"] select:focus-visible,
+[data-bs-theme="dark"] textarea:focus-visible {
+  outline-color: #82d3e3;
+}
+
+/* Reducir movimiento para usuarios con preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utilidad para desactivar animaciones/entradas en elementos que se actualizan frecuentemente */
+.no-entrance {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Mejorar el contraste para usuarios con problemas de visión */
+@media (prefers-contrast: more) {
+  :root {
+    --primary-color: #0f4c5a;
+    --primary-dark: #000;
+    --border-light: #5a5a5a;
+    --text-secondary: #404040;
+  }
+}
+
+/* ============================================================================
+   IMPRESIÓN
+   ============================================================================ */
+
+@media print {
+  .navbar,
+  .btn,
+  .dropdown-menu,
+  .modal {
+    display: none !important;
+  }
+  
+  .card,
+  .table {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+  }
+}
