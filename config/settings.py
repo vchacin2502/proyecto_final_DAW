@@ -3,9 +3,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production-DO-NOT-USE-IN-PROD")
-DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("DJANGO_SECRET_KEY", "change-me-in-production-DO-NOT-USE-IN-PROD")
+DEBUG = (os.getenv("DEBUG") or os.getenv("DJANGO_DEBUG", "False")) == "True"
+ALLOWED_HOSTS = (os.getenv("ALLOWED_HOSTS") or os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")).split(",")
 
 CSRF_TRUSTED_ORIGINS = [
     "https://cafit.freemyip.com",
@@ -56,11 +56,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "nombre_db"),
-        "USER": os.getenv("POSTGRES_USER", "usuario_db"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "password_db"),
-        "HOST": os.getenv("POSTGRES_HOST", "db"),
-        "PORT": os.getenv("POSTGRES_PORT", "5432"),
+        "NAME": os.getenv("POSTGRES_DB") or os.getenv("DB_NAME", "nombre_db"),
+        "USER": os.getenv("POSTGRES_USER") or os.getenv("DB_USER", "usuario_db"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD") or os.getenv("DB_PASSWORD", "password_db"),
+        "HOST": os.getenv("POSTGRES_HOST") or os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("POSTGRES_PORT") or os.getenv("DB_PORT", "5432"),
     }
 }
 
@@ -86,3 +86,4 @@ SECURE_CONTENT_SECURITY_POLICY = {
     "default-src": ("'self'",),
 }
 X_FRAME_OPTIONS = "DENY"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

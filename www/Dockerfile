@@ -11,8 +11,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-# Make entrypoint executable
-RUN chmod +x www/entrypoint.sh
+# Normalize shell scripts copied from Windows and make them executable
+RUN sed -i 's/\r$//' www/*.sh && chmod +x www/*.sh
 
 # Run migrations and collect static files
-ENTRYPOINT ["www/entrypoint.sh"]
+ENTRYPOINT ["bash", "www/entrypoint.sh"]
