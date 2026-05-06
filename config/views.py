@@ -562,7 +562,18 @@ def chat_sala(request, sala_slug):
             if not razon or not razon.strip():
                 messages.error(request, "La razón del reporte no puede estar vacía.")
                 return redirect(request.path)
-            messages.success(request, "Mensaje reportado correctamente.")
+            try:
+                mensaje = MensajeChat.objects.get(id=mensaje_id)
+                from .models import Incidencia
+                Incidencia.objects.create(
+                    mensaje=mensaje,
+                    reportero=request.user,
+                    razon=razon.strip()
+                )
+                messages.success(request, "Mensaje reportado correctamente.")
+            except MensajeChat.DoesNotExist:
+                messages.error(request, "El mensaje no existe.")
+                return redirect(request.path)
         elif accion == "borrar_mensaje":
             mensaje_id_raw = request.POST.get("mensaje_id", "")
             try:
@@ -609,8 +620,6 @@ def chat_mensajes_nuevos(request, sala_slug):
         MensajeChat.objects.filter(
             sala=sala,
             id__gt=last_id,
-            esta_oculto=False,
-            estado_moderacion="visible",
         )
         .select_related("usuario")
         .order_by("id")
@@ -1356,7 +1365,7 @@ def admin_usuarios(request):
         messages.warning(request, "No tienes permisos de administrador.")
         return redirect("dashboard")
 
-    # GET: Mostrar usuarios
+    
     busqueda = request.GET.get("q", "").strip()
     usuarios = User.objects.all().order_by("username")
 
@@ -1388,7 +1397,7 @@ def reportar_problema(request):
         messages.error(request, "El asunto no puede estar vacío.")
         return redirect(destino)
 
-    # Crear una incidencia sin mensaje asociado (es un problema/bug reportado)
+
     Incidencia.objects.create(
         reportero=request.user,
         razon=asunto

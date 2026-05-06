@@ -1,11 +1,21 @@
+import os
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "cambia-esta-clave-en-produccion"
 DEBUG = True
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.100.156", "192.168.1.26"]
+ALLOWED_HOSTS = [
+    "cafit.freemyip.com",
+    "34.224.22.53",
+    "localhost",
+    "127.0.0.1",
+    "django_backend",
+]
+
 CSRF_TRUSTED_ORIGINS = [
+    "https://cafit.freemyip.com",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
     "http://192.168.100.156:8000",
@@ -70,3 +80,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/acceso/"
 LOGIN_REDIRECT_URL = "/dashboard/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
