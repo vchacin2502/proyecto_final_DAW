@@ -5,27 +5,39 @@ services:
     build:
       context: ..
       dockerfile: www/Dockerfile
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ..:/app
+      - ../staticfiles:/app/staticfiles
     expose:
       - 8000
     env_file:
       - ../.env
     depends_on:
       - db
+    networks:
+      - default
+    restart: unless-stopped
 
   db:
     image: postgres:15
+    container_name: postgres_db
     environment:
-      POSTGRES_DB: nombre_db
-      POSTGRES_USER: usuario_db
-      POSTGRES_PASSWORD: password_db
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - default
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   nginx:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: contenedor_nginx
     ports:
       - "80:80"
@@ -37,6 +49,20 @@ services:
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
       - ../staticfiles:/app/staticfiles
+    networks:
+      - default
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'
+    networks:
+      - default
+    restart: unless-stopped
 
 networks:
   default:

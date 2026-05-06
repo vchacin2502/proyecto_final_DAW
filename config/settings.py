@@ -1,25 +1,16 @@
 import os
-
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "cambia-esta-clave-en-produccion"
-DEBUG = True
-ALLOWED_HOSTS = [
-    "cafit.freemyip.com",
-    "34.224.22.53",
-    "localhost",
-    "127.0.0.1",
-    "django_backend",
-]
+SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production-DO-NOT-USE-IN-PROD")
+DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 CSRF_TRUSTED_ORIGINS = [
     "https://cafit.freemyip.com",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
-    "http://192.168.100.156:8000",
-    "http://192.168.1.26:8000",
 ]
 
 INSTALLED_APPS = [
@@ -64,8 +55,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "nombre_db"),
+        "USER": os.getenv("POSTGRES_USER", "usuario_db"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "password_db"),
+        "HOST": os.getenv("POSTGRES_HOST", "db"),
+        "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
 }
 
@@ -76,9 +71,18 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/acceso/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# Security settings for production
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_SECURITY_POLICY = {
+    "default-src": ("'self'",),
+}
+X_FRAME_OPTIONS = "DENY"
