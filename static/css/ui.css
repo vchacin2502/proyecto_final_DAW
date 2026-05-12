@@ -1,0 +1,172 @@
+:root {
+    --ui-accent: #0d6efd;
+    --ui-accent-2: #6f42c1;
+    --ui-radius: 14px;
+    --ui-shadow: 0 14px 34px rgba(15, 34, 58, 0.10);
+    --ui-shadow-soft: 0 8px 24px rgba(15, 34, 58, 0.08);
+}
+
+.page-title {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.page-title::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 4px;
+    border-radius: 999px;
+    margin-top: .55rem;
+    background: linear-gradient(90deg, var(--ui-accent), var(--ui-accent-2));
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    margin-top: -.4rem;
+    margin-bottom: 1.15rem;
+}
+
+.card,
+.surface-soft,
+.table-responsive,
+.modal-content {
+    border-radius: var(--ui-radius);
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.card:hover,
+.surface-soft:hover {
+    box-shadow: var(--ui-shadow-soft);
+}
+
+.surface-soft {
+    backdrop-filter: blur(1px);
+}
+
+.btn-primary,
+.btn-success,
+.btn-outline-primary {
+    border-radius: 11px;
+    padding: .62rem 1rem;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background-image: linear-gradient(100deg, var(--ui-accent), #0b8de8);
+    border: none;
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-outline-primary:hover {
+    transform: translateY(-1px);
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+    transition: box-shadow .18s ease, transform .18s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.14);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.navbar {
+    transition: box-shadow .2s ease;
+}
+
+.navbar.glow {
+    box-shadow: 0 10px 28px rgba(11, 24, 45, 0.08);
+}
+
+.table thead th {
+    border-bottom-width: 2px;
+    font-weight: 700;
+    letter-spacing: .01em;
+}
+
+.table-hover tbody tr {
+    transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.table-hover tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.035);
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(10px) scale(.995);
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1);
+}
+
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+body[data-page="dashboard"] .kcal-hero,
+body[data-page="dashboard"] .meals-panel,
+body[data-page="dashboard"] .meal-summary-card {
+    box-shadow: var(--ui-shadow-soft);
+}
+
+body[data-page="dashboard"] .meal-summary-card:hover {
+    transform: translateY(-2px) scale(1.01);
+}
+
+body[data-page="estadisticas"] .stats-shell {
+    box-shadow: var(--ui-shadow);
+}
+
+body[data-page="estadisticas"] .calendar-day {
+    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+
+body[data-page="estadisticas"] .calendar-day:hover {
+    transform: translateY(-1px);
+}
+
+body[data-page="chat"] .chat-room-card,
+body[data-page="chat_sala"] .chat-window,
+body[data-page="chat_sala"] .chat-bubble {
+    box-shadow: var(--ui-shadow-soft);
+}
+
+body[data-page="chat_sala"] .chat-bubble {
+    animation: bubbleIn .24s ease both;
+}
+
+body[data-page="panel_admin"] .admin-card-link .surface-soft,
+body[data-page="admin_usuarios"] .table-responsive,
+body[data-page="admin_chat"] .table-responsive,
+body[data-page="admin_incidencias"] .table-responsive {
+    box-shadow: var(--ui-shadow-soft);
+}
+
+.usuario-row,
+.incidencia-row {
+    border-radius: 8px;
+}
+
+@keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(5px) scale(.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+    .card,
+    .surface-soft,
+    .modal-content {
+        border-radius: 11px;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+}

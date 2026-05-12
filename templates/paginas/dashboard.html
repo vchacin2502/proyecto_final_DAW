@@ -55,6 +55,14 @@
       box-shadow: 0 0.3rem 0.8rem rgba(31,122,140,0.06);
     }
 
+    .meal-summary-card {
+      width: 100%;
+      text-align: left;
+      border: 0;
+      padding: 0;
+      background: transparent;
+    }
+
     [data-bs-theme="dark"] .kcal-hero, [data-bs-theme="dark"] .surface-soft, [data-bs-theme="dark"] .meals-panel, [data-bs-theme="dark"] .meal-summary-card {
       border: 1.5px solid #3a4957 !important;
       background: #232b36;
@@ -136,7 +144,14 @@
         {% if historial_comidas %}
           <div class="meals-list vstack gap-2">
             {% for meal in historial_comidas %}
-              <button type="button" class="meal-summary-card p-2 px-3" data-bs-toggle="modal" data-bs-target="#mealModal{{ meal.indice_historial }}">
+              <button
+                type="button"
+                class="meal-summary-card p-2 px-3"
+                data-meal-id="{{ meal.indice_historial }}"
+                data-meal-payload-id="meal-payload-{{ meal.indice_historial }}"
+                data-meal-edit-url="{% url 'editar_comida' meal.indice_historial %}"
+                data-meal-delete-url="{% url 'borrar_comida' meal.indice_historial %}"
+              >
                 <div class="d-flex align-items-center justify-content-between w-100">
                   <span class="fw-semibold">{{ meal.etiqueta_comida }}</span>
                   <span class="d-flex align-items-center gap-2">
@@ -145,66 +160,7 @@
                   </span>
                 </div>
               </button>
-
-              <div class="modal fade" id="mealModal{{ meal.indice_historial }}" tabindex="-1" aria-labelledby="mealModalLabel{{ meal.indice_historial }}" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <div>
-                        <h5 class="modal-title mb-0" id="mealModalLabel{{ meal.indice_historial }}">{{ meal.etiqueta_comida }}</h5>
-                      </div>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                      <div>
-                        <h6 class="fw-semibold mb-3">Resumen de macros</h6>
-                        <div class="row g-2">
-                          <div class="col-6 col-sm-4">
-                            <div class="text-center p-2 surface-soft rounded">
-                              <p class="small text-secondary mb-1">Proteínas</p>
-                              <p class="h6 mb-0">{{ meal.totales.proteinas }} g</p>
-                            </div>
-                          </div>
-                          <div class="col-6 col-sm-4">
-                            <div class="text-center p-2 surface-soft rounded">
-                              <p class="small text-secondary mb-1">Carbohidratos</p>
-                              <p class="h6 mb-0">{{ meal.totales.carbohidratos }} g</p>
-                            </div>
-                          </div>
-                          <div class="col-6 col-sm-4">
-                            <div class="text-center p-2 surface-soft rounded">
-                              <p class="small text-secondary mb-1">Grasas</p>
-                              <p class="h6 mb-0">{{ meal.totales.grasas }} g</p>
-                            </div>
-                          </div>
-                          <div class="col-6 col-sm-4">
-                            <div class="text-center p-2 surface-soft rounded">
-                              <p class="small text-secondary mb-1">Azúcares</p>
-                              <p class="h6 mb-0">{{ meal.totales.azucares }} g</p>
-                            </div>
-                          </div>
-                          <div class="col-6 col-sm-4">
-                            <div class="text-center p-2 surface-soft rounded">
-                              <p class="small text-secondary mb-1">Saturadas</p>
-                              <p class="h6 mb-0">{{ meal.totales.saturadas }} g</p>
-                            </div>
-                          </div>
-                          <div class="col-6 col-sm-4">
-                            <div class="text-center p-2 surface-soft rounded">
-                              <p class="small text-secondary mb-1">Calorías</p>
-                              <p class="h6 mb-0">{{ meal.totales.kcal }} kcal</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <a href="{% url 'editar_comida' meal.indice_historial %}" class="btn btn-outline-secondary">Editar</a>
-                      <a href="{% url 'borrar_comida' meal.indice_historial %}" class="btn btn-outline-danger" onclick="return confirm('¿Estás seguro de que quieres borrar esta comida?');">Borrar</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <script type="application/json" id="meal-payload-{{ meal.indice_historial }}">{{ meal.payload_json|safe }}</script>
             {% endfor %}
           </div>
         {% else %}
@@ -213,4 +169,84 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="dashboardMealModal" tabindex="-1" aria-labelledby="dashboardMealModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title mb-0" id="dashboardMealModalLabel">Comida</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <h6 class="fw-semibold mb-3">Resumen de macros</h6>
+          <div class="row g-2" id="dashboardMealTotals"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <a href="#" id="dashboardMealEditLink" class="btn btn-outline-secondary">Editar</a>
+          <a href="#" id="dashboardMealDeleteLink" class="btn btn-outline-danger">Borrar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (!window.bootstrap) return;
+
+      const modalEl = document.getElementById('dashboardMealModal');
+      const titleEl = document.getElementById('dashboardMealModalLabel');
+      const totalsEl = document.getElementById('dashboardMealTotals');
+      const editLink = document.getElementById('dashboardMealEditLink');
+      const deleteLink = document.getElementById('dashboardMealDeleteLink');
+
+      function formatValue(value, suffix) {
+        const parsed = Number(value || 0);
+        return `${parsed.toFixed(1)} ${suffix}`;
+      }
+
+      function renderTotalCard(label, value, suffix) {
+        return `
+          <div class="col-6 col-sm-4">
+            <div class="text-center p-2 surface-soft rounded">
+              <p class="small text-secondary mb-1">${label}</p>
+              <p class="h6 mb-0">${formatValue(value, suffix)}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      document.querySelectorAll('.meal-summary-card[data-meal-id]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const payloadId = btn.getAttribute('data-meal-payload-id') || '';
+          const payloadScript = payloadId ? document.getElementById(payloadId) : null;
+          const payload = payloadScript ? JSON.parse(payloadScript.textContent || '{}') : {};
+          const mealName = payload.nombre || 'Comida';
+          const mealTotals = payload.totales || {};
+          const editUrl = btn.getAttribute('data-meal-edit-url') || '#';
+          const deleteUrl = btn.getAttribute('data-meal-delete-url') || '#';
+
+          titleEl.textContent = mealName;
+          totalsEl.innerHTML = [
+            renderTotalCard('Proteínas', mealTotals.proteinas, 'g'),
+            renderTotalCard('Carbohidratos', mealTotals.carbohidratos, 'g'),
+            renderTotalCard('Grasas', mealTotals.grasas, 'g'),
+            renderTotalCard('Azúcares', mealTotals.azucares, 'g'),
+            renderTotalCard('Saturadas', mealTotals.saturadas, 'g'),
+            renderTotalCard('Calorías', mealTotals.kcal, 'kcal')
+          ].join('');
+
+          editLink.href = editUrl;
+          deleteLink.href = deleteUrl;
+          deleteLink.onclick = function () {
+            return confirm('¿Estás seguro de que quieres borrar esta comida?');
+          };
+
+          bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        });
+      });
+    });
+  </script>
 {% endblock %}

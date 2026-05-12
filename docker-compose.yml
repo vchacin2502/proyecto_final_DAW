@@ -1,0 +1,49 @@
+services:
+  web:
+    build: .
+    restart: always
+    expose:
+      - "8000"
+    networks:
+      - cafit-network
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - DEBUG=False
+      - SECURE_SSL_REDIRECT=True
+      - SESSION_COOKIE_SECURE=True
+      - CSRF_COOKIE_SECURE=True
+      - SECURE_HSTS_SECONDS=31536000
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-cafit
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    networks:
+      - cafit-network
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+      - ./static:/app/static:ro
+    restart: always
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot-cafit
+    depends_on:
+      - nginx
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done"
+    restart: always
+    networks:
+      - cafit-network
+
+networks:
+  cafit-network:
+    driver: bridge

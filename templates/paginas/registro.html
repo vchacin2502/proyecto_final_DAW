@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %}Registro{% endblock %}
+
+{% block extra_head %}
+  <link href="{% static 'css/auth.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block contenido %}
   <h2 class="h4 mb-3">Crear cuenta</h2>
@@ -19,7 +24,10 @@
 
     <div class="col-12">
       <label for="password" class="form-label">Contraseña</label>
-      <input id="password" name="password" type="password" class="form-control" placeholder="********" required>
+      <div class="input-group">
+        <input id="password" name="password" type="password" class="form-control" placeholder="********" required>
+        <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Mostrar contraseña"><i class="bi bi-eye"></i></button>
+      </div>
     </div>
 
     <div class="col-12">
@@ -27,4 +35,17 @@
     </div>
   </form>
   <p class="mt-3 mb-0">Si ya tienes cuenta, ve a <a href="{% url 'acceso' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">Acceso</a>.</p>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const btn = document.getElementById('togglePassword');
+      const pwd = document.getElementById('password');
+      if(btn && pwd){
+        btn.addEventListener('click', function(){
+          const type = pwd.getAttribute('type') === 'password' ? 'text' : 'password';
+          pwd.setAttribute('type', type);
+          this.querySelector('i').className = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+        });
+      }
+    });
+  </script>
 {% endblock %}

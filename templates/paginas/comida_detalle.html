@@ -17,6 +17,11 @@
     }
     .resumen-lista { max-height: 240px; overflow: auto; }
     .catalogo-toolbar .form-control { max-width: 420px; }
+    .btn-ver-alimento { min-width: 36px; }
+    .col-cantidad { width: 112px; }
+    .col-unidad { width: 94px; }
+    .resumen-cantidad-nueva,
+    .resumen-unidad-nueva { min-width: 0; }
     .resumen-macros-box {
       border: 2px solid #b0b8be;
       border-radius: 0.7rem;
@@ -141,15 +146,9 @@
                 <tr>
                   <th>Usar</th>
                   <th>Alimento</th>
-                  <th>Referencia</th>
-                  <th>Kcal</th>
-                  <th>P</th>
-                  <th>C</th>
-                  <th>Az.</th>
-                  <th>G</th>
-                  <th>Sat.</th>
                   <th>Cantidad</th>
                   <th>Unidad</th>
+                  <th class="text-end"></th>
                 </tr>
               </thead>
               <tbody>
@@ -164,6 +163,8 @@
                     data-azucares="{{ food.azucares }}"
                     data-grasas="{{ food.grasas }}"
                     data-saturadas="{{ food.saturadas }}"
+                    data-marca="{{ food.marca|default:'-' }}"
+                    data-unidad="{{ food.unidad }}"
                     data-cantidad-referencia="{{ food.cantidad_referencia }}"
                   >
                     <td>
@@ -173,27 +174,50 @@
                       <div class="fw-semibold">{{ food.nombre }}</div>
                       <div class="small text-secondary">{{ food.marca }}</div>
                     </td>
-                    <td>{{ food.cantidad_referencia }} {{ food.unidad }}</td>
-                    <td>{{ food.kcal }}</td>
-                    <td>{{ food.proteinas }}</td>
-                    <td>{{ food.carbohidratos }}</td>
-                    <td>{{ food.azucares }}</td>
-                    <td>{{ food.grasas }}</td>
-                    <td>{{ food.saturadas }}</td>
-                    <td class="min-width-qty">
+                    <td class="col-cantidad">
                       <input type="number" step="0.1" class="form-control form-control-sm resumen-cantidad-nueva" name="qty_food_{{ food.id }}">
                     </td>
-                    <td class="min-width-cal">
+                    <td class="col-unidad">
                       <select class="form-select form-select-sm resumen-unidad-nueva" name="unit_food_{{ food.id }}">
                         <option value="g">g</option>
                         <option value="ml">ml</option>
                         <option value="unidad">unidad</option>
                       </select>
                     </td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-sm btn-outline-secondary btn-ver-alimento" aria-label="Ver detalle" title="Ver detalle">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="detalleAlimentoModal" tabindex="-1" aria-labelledby="detalleAlimentoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="detalleAlimentoLabel">Detalle de alimento</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <div class="vstack gap-2 small">
+                <div class="d-flex justify-content-between"><span class="text-secondary">Nombre</span><strong id="detalleNombre">-</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-secondary">Marca</span><strong id="detalleMarca">-</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-secondary">Referencia</span><strong id="detalleReferencia">-</strong></div>
+                <hr class="my-1">
+                <div class="d-flex justify-content-between"><span class="text-secondary">Kcal</span><strong id="detalleKcal">-</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-secondary">Proteínas</span><strong id="detalleProteinas">-</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-secondary">Carbohidratos</span><strong id="detalleCarbohidratos">-</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-secondary">Azúcares</span><strong id="detalleAzucares">-</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-secondary">Grasas</span><strong id="detalleGrasas">-</strong></div>
+                <div class="d-flex justify-content-between"><span class="text-secondary">Saturadas</span><strong id="detalleSaturadas">-</strong></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -209,7 +233,9 @@
             <div class="d-flex justify-content-between"><span>Kcal</span><strong id="resumenKcal">0</strong></div>
             <div class="d-flex justify-content-between"><span>Proteinas</span><strong id="resumenProteinas">0 g</strong></div>
             <div class="d-flex justify-content-between"><span>Carbohidratos</span><strong id="resumenCarbohidratos">0 g</strong></div>
+            <div class="d-flex justify-content-between"><span>Azúcares</span><strong id="resumenAzucares">0 g</strong></div>
             <div class="d-flex justify-content-between"><span>Grasas</span><strong id="resumenGrasas">0 g</strong></div>
+            <div class="d-flex justify-content-between"><span>Saturadas</span><strong id="resumenSaturadas">0 g</strong></div>
           </div>
           <button type="submit" class="btn btn-success w-100 mb-2">{% if modo_edicion %}Actualizar comida{% else %}Terminar comida{% endif %}</button>
           {% if not modo_edicion %}
@@ -221,13 +247,15 @@
   </form>
 
   <script>
-    (function () {
+    document.addEventListener("DOMContentLoaded", function () {
       var contador = document.getElementById("resumenContador");
       var lista = document.getElementById("resumenLista");
       var kcalEl = document.getElementById("resumenKcal");
       var proteinasEl = document.getElementById("resumenProteinas");
       var carbohidratosEl = document.getElementById("resumenCarbohidratos");
+      var azucaresEl = document.getElementById("resumenAzucares");
       var grasasEl = document.getElementById("resumenGrasas");
+      var saturadasEl = document.getElementById("resumenSaturadas");
 
       function toNumber(value) {
         var n = parseFloat(value);
@@ -249,7 +277,9 @@
           kcal: round2(totals.kcal),
           proteinas: round2(totals.proteinas),
           carbohidratos: round2(totals.carbohidratos),
-          grasas: round2(totals.grasas)
+          azucares: round2(totals.azucares),
+          grasas: round2(totals.grasas),
+          saturadas: round2(totals.saturadas)
         });
       }
 
@@ -274,7 +304,9 @@
             kcal: toNumber(row.dataset.kcal) * factor,
             proteinas: toNumber(row.dataset.proteinas) * factor,
             carbohidratos: toNumber(row.dataset.carbohidratos) * factor,
-            grasas: toNumber(row.dataset.grasas) * factor
+            azucares: toNumber(row.dataset.azucares) * factor,
+            grasas: toNumber(row.dataset.grasas) * factor,
+            saturadas: toNumber(row.dataset.saturadas) * factor
           });
         });
 
@@ -296,7 +328,9 @@
             kcal: toNumber(row.dataset.kcal) * factor,
             proteinas: toNumber(row.dataset.proteinas) * factor,
             carbohidratos: toNumber(row.dataset.carbohidratos) * factor,
-            grasas: toNumber(row.dataset.grasas) * factor
+            azucares: toNumber(row.dataset.azucares) * factor,
+            grasas: toNumber(row.dataset.grasas) * factor,
+            saturadas: toNumber(row.dataset.saturadas) * factor
           });
         });
 
@@ -308,7 +342,9 @@
         var totalKcal = 0;
         var totalProteinas = 0;
         var totalCarbohidratos = 0;
+        var totalAzucares = 0;
         var totalGrasas = 0;
+        var totalSaturadas = 0;
 
         lista.innerHTML = "";
         if (!items.length) {
@@ -318,7 +354,9 @@
             totalKcal += item.kcal;
             totalProteinas += item.proteinas;
             totalCarbohidratos += item.carbohidratos;
+            totalAzucares += item.azucares;
             totalGrasas += item.grasas;
+            totalSaturadas += item.saturadas;
 
             var li = document.createElement("li");
             li.className = "list-group-item";
@@ -332,7 +370,9 @@
         kcalEl.textContent = String(round2(totalKcal));
         proteinasEl.textContent = round2(totalProteinas) + " g";
         carbohidratosEl.textContent = round2(totalCarbohidratos) + " g";
+        azucaresEl.textContent = round2(totalAzucares) + " g";
         grasasEl.textContent = round2(totalGrasas) + " g";
+        saturadasEl.textContent = round2(totalSaturadas) + " g";
       }
 
       document.querySelectorAll(".resumen-check-existente, .resumen-cantidad-existente, .resumen-unidad-existente, .resumen-check-nueva, .resumen-cantidad-nueva, .resumen-unidad-nueva").forEach(function (el) {
@@ -356,8 +396,37 @@
         buscadorCatalogo.addEventListener("change", filtrarCatalogo);
       }
 
+      var detalleModalEl = document.getElementById("detalleAlimentoModal");
+      var detalleModal = (detalleModalEl && window.bootstrap) ? new bootstrap.Modal(detalleModalEl) : null;
+
+      function setText(id, value) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.textContent = value;
+        }
+      }
+
+      document.querySelectorAll(".btn-ver-alimento").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var row = btn.closest(".fila-resumen-nueva");
+          if (!row || !detalleModal) {
+            return;
+          }
+          setText("detalleNombre", row.dataset.nombre || "-");
+          setText("detalleMarca", row.dataset.marca || "-");
+          setText("detalleReferencia", (row.dataset.cantidadReferencia || "0") + " " + (row.dataset.unidad || ""));
+          setText("detalleKcal", row.dataset.kcal || "0");
+          setText("detalleProteinas", (row.dataset.proteinas || "0") + " g");
+          setText("detalleCarbohidratos", (row.dataset.carbohidratos || "0") + " g");
+          setText("detalleAzucares", (row.dataset.azucares || "0") + " g");
+          setText("detalleGrasas", (row.dataset.grasas || "0") + " g");
+          setText("detalleSaturadas", (row.dataset.saturadas || "0") + " g");
+          detalleModal.show();
+        });
+      });
+
       renderSummary();
       filtrarCatalogo();
-    })();
+    });
   </script>
 {% endblock %}

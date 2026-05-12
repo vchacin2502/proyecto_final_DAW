@@ -1,0 +1,15 @@
+certbot/conf/
+certbot/www/
+.git/
+.gitignore
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+db.sqlite3
+venv/
+.venv/
+staticfiles/

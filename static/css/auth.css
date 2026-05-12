@@ -1,0 +1,57 @@
+:root {
+    --auth-card-bg: var(--bg-primary);
+}
+
+.auth-card {
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(12, 38, 63, 0.12);
+    background: var(--card-bg);
+}
+
+.logo-auth {
+    max-width: 110px;
+    height: auto;
+}
+
+.auth-card h2 {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.auth-card .form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.auth-card .form-control {
+    border-radius: 8px;
+    padding: 0.75rem 0.9rem;
+}
+
+.auth-card .btn {
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+.auth-divider::before, .auth-divider::after {
+    content: '';
+    height: 1px;
+    background: var(--border-color);
+    flex: 1 1 auto;
+}
+
+.oauth-buttons .btn {
+    border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+    .auth-card { padding: 1.25rem; }
+    .logo-auth { max-width: 90px; }
+}

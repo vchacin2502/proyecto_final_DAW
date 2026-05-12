@@ -1,32 +1,22 @@
-/* ============================================================================
-   CaFit CSS - Sistema de diseño completo
-   Soporte para tema oscuro/claro con mejoras de accesibilidad
-   ============================================================================ */
-
 :root {
-  /* Colores principales */
   --primary-color: #1f7a8c;
   --primary-dark: #1a232b;
   --primary-hover: #175a6f;
   --border-light: #b0b8be;
   --shadow-light: rgba(31, 122, 140, 0.07);
   --shadow-dark: rgba(16, 30, 54, 0.08);
-  
-  /* Colores de texto */
+
   --text-primary: #212529;
   --text-secondary: #6c757d;
-  
-  /* Transiciones */
+
   --transition-fast: 0.12s ease;
   --transition-smooth: 0.3s ease;
-  
-  /* Border radius */
+
   --border-radius-sm: 0.75rem;
   --border-radius-md: 1.25rem;
   --border-radius-lg: 1.5rem;
 }
 
-/* Tema oscuro */
 [data-bs-theme="dark"] {
   --border-light: #3a4957;
   --text-primary: #f8f9fa;
@@ -34,10 +24,6 @@
   --shadow-light: rgba(0, 0, 0, 0.34);
   --bg-dark: #181c22;
 }
-
-/* ============================================================================
-   BODY Y ELEMENTOS BASE
-   ============================================================================ */
 
 html {
   scroll-behavior: smooth;
@@ -63,7 +49,6 @@ body {
               transform var(--transition-smooth);
 }
 
-/* Borde más redondeado en cards y modales */
 .card,
 .modal-content {
   border-radius: var(--border-radius-lg);
@@ -78,10 +63,6 @@ body {
   border: 1.5px solid var(--border-light) !important;
   transition: border-color var(--transition-smooth);
 }
-
-/* ============================================================================
-   NAVEGACIÓN
-   ============================================================================ */
 
 .nav-link,
 .dropdown-item,
@@ -109,7 +90,6 @@ body {
   transition: background-color 0.12s ease, transform 0.12s ease;
 }
 
-/* Guaoa animation: pop + shimmer for active nav item */
 @keyframes guaoaPop {
   0% { transform: scale(1); box-shadow: none; }
   40% { transform: scale(1.08); box-shadow: 0 10px 24px rgba(31,122,140,0.18); }
@@ -181,18 +161,10 @@ body {
   border-radius: var(--border-radius-md);
 }
 
-/* ============================================================================
-   TEXTOS
-   ============================================================================ */
-
 .text-muted,
 .text-secondary {
   color: var(--text-secondary) !important;
 }
-
-/* ============================================================================
-   FORMULARIOS E INPUTS
-   ============================================================================ */
 
 .form-control,
 .form-select {
@@ -237,10 +209,6 @@ body {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 0.25rem rgba(31, 122, 140, 0.25);
 }
-
-/* ============================================================================
-   BOTONES
-   ============================================================================ */
 
 .btn {
   transition: all var(--transition-fast);
@@ -289,10 +257,6 @@ body {
   box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
 }
 
-/* ============================================================================
-   BADGES Y ETIQUETAS
-   ============================================================================ */
-
 .badge {
   padding: 0.5rem 0.75rem;
   font-weight: 500;
@@ -305,10 +269,6 @@ body {
   transform: scale(1.05);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-/* ============================================================================
-   ALERTAS
-   ============================================================================ */
 
 .alert {
   border: 1px solid;
@@ -353,10 +313,6 @@ body {
   color: #ea868f;
 }
 
-/* ============================================================================
-   TABLAS
-   ============================================================================ */
-
 table {
 }
 
@@ -396,12 +352,7 @@ table td.min-width-cal {
   letter-spacing: 0.5px;
 }
 
-/* ============================================================================
-   MODALES
-   ============================================================================ */
-
 .modal-content {
-  /* Evitar animación de entrada en modales por defecto (mejor UX en recargas parciales) */
   border-radius: var(--border-radius-lg);
 }
 
@@ -418,10 +369,6 @@ table td.min-width-cal {
 .modal-title {
   font-weight: 600;
 }
-
-/* ============================================================================
-   COMIDA - OPCIONES DE BLOQUE
-   ============================================================================ */
 
 :root {
   --meal-option-border: rgba(31, 122, 140, 0.18);
@@ -473,10 +420,6 @@ table td.min-width-cal {
   padding: 0 1rem;
 }
 
-/* ============================================================================
-   ICONOS Y UTILIDADES
-   ============================================================================ */
-
 .icon-info {
   font-size: 1.2rem;
   cursor: help;
@@ -517,10 +460,6 @@ table td.min-width-cal {
   font-weight: 500;
 }
 
-/* ============================================================================
-   ANIMACIONES
-   ============================================================================ */
-
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -549,10 +488,6 @@ table td.min-width-cal {
     opacity: 0.7;
   }
 }
-
-/* ============================================================================
-   RESPONSIVE
-   ============================================================================ */
 
 @media (max-width: 992px) {
   .navbar {
@@ -642,7 +577,6 @@ table td.min-width-cal {
   }
 }
 
-/* Fix para input en mobile - evitar zoom al hacer focus */
 @media (max-width: 768px) {
   input[type="text"],
   input[type="email"],
@@ -653,10 +587,6 @@ table td.min-width-cal {
     font-size: 16px !important;
   }
 }
-
-/* ============================================================================
-   ACCESIBILIDAD
-   ============================================================================ */
 
 button:focus-visible,
 a:focus-visible,
@@ -675,7 +605,6 @@ textarea:focus-visible {
   outline-color: #82d3e3;
 }
 
-/* Reducir movimiento para usuarios con preferencias de movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -687,13 +616,38 @@ textarea:focus-visible {
   }
 }
 
-/* Utilidad para desactivar animaciones/entradas en elementos que se actualizan frecuentemente */
 .no-entrance {
   animation: none !important;
   transition: none !important;
 }
 
-/* Mejorar el contraste para usuarios con problemas de visión */
+@media (max-width: 991.98px) {
+  .mobile-bottom-nav {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1080;
+    width: 100%;
+    border-radius: 0 !important;
+    padding-bottom: max(0.35rem, env(safe-area-inset-bottom));
+  }
+
+  .mobile-bottom-nav .container {
+    max-width: 100%;
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  .pb-mobile-nav-safe {
+    padding-bottom: 10rem !important;
+  }
+
+  body[data-page="chat_sala"] .pb-mobile-nav-safe {
+    padding-bottom: 11rem !important;
+  }
+}
+
 @media (prefers-contrast: more) {
   :root {
     --primary-color: #0f4c5a;
@@ -702,10 +656,6 @@ textarea:focus-visible {
     --text-secondary: #404040;
   }
 }
-
-/* ============================================================================
-   IMPRESIÓN
-   ============================================================================ */
 
 @media print {
   .navbar,

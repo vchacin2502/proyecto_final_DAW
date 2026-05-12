@@ -22,7 +22,6 @@
               background: #111923;
               border-color: #234;
             }
-        /* Tema oscuro */
         [data-bs-theme="dark"] .chat-window {
           background: #16212d;
           border-color: #234;
@@ -118,6 +117,12 @@
       .chat-messages { padding: 0.24rem; min-height: 0; }
       .chat-bubble { max-width: 98%; }
       .chat-send-btn { width: 40px; height: 40px; }
+    }
+    @media (max-width: 991.98px) {
+      .chat-wrapper {
+        height: calc(100dvh - 13rem);
+        margin-bottom: 1rem;
+      }
     }
   </style>
 

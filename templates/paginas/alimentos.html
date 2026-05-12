@@ -2,11 +2,12 @@
 {% block contenido %}
 <style>
   .buscador-toolbar .form-control { max-width: 520px; }
+  .acciones-alimento { white-space: nowrap; }
   @media (max-width: 576px) {
     .buscador-toolbar { flex-direction: column; align-items: stretch; }
     .buscador-toolbar .form-control { max-width: none; }
     .table-responsive { overflow-x: auto; }
-    .table { min-width: 700px; }
+    .table { min-width: 460px; }
   }
   .catalogo-vacio { display: none; }
 </style>
@@ -30,29 +31,18 @@
         <tr>
           <th>Nombre</th>
           <th>Marca</th>
-          <th>Unidad</th>
-          <th>Kcal/100</th>
-          <th>Proteínas</th>
-          <th>Carbohidratos</th>
-          <th>Azúcares</th>
-          <th>Grasas</th>
-          <th>Saturadas</th>
-          <th class="text-end">Acciones</th>
+          <th class="text-end"></th>
         </tr>
       </thead>
       <tbody id="tablaAlimentosBody">
         {% for alimento in alimentos %}
-          <tr class="fila-alimento" data-busqueda="{{ alimento.nombre|lower }} {{ alimento.marca|default:''|lower }} {{ alimento.unidad|lower }}">
+          <tr class="fila-alimento" data-busqueda="{{ alimento.nombre|lower }} {{ alimento.marca|default:''|lower }}" data-nombre="{{ alimento.nombre }}" data-marca="{{ alimento.marca|default:'-' }}" data-unidad="{{ alimento.unidad }}" data-cantidad-referencia="{{ alimento.cantidad_referencia }}" data-kcal="{{ alimento.kcal }}" data-proteinas="{{ alimento.proteinas }}" data-carbohidratos="{{ alimento.carbohidratos }}" data-azucares="{{ alimento.azucares }}" data-grasas="{{ alimento.grasas }}" data-saturadas="{{ alimento.saturadas }}">
             <td>{{ alimento.nombre }}</td>
             <td>{{ alimento.marca|default:'-' }}</td>
-            <td>{{ alimento.unidad }}</td>
-            <td>{{ alimento.kcal }}</td>
-            <td>{{ alimento.proteinas }} g</td>
-            <td>{{ alimento.carbohidratos }} g</td>
-            <td>{{ alimento.azucares }} g</td>
-            <td>{{ alimento.grasas }} g</td>
-            <td>{{ alimento.saturadas }} g</td>
-            <td class="text-end">
+            <td class="text-end acciones-alimento">
+              <button type="button" class="btn btn-sm btn-outline-secondary btn-ver-detalle-alimento" aria-label="Ver detalle" title="Ver detalle">
+                <i class="bi bi-eye"></i>
+              </button>
               <button type="button" class="btn btn-sm btn-outline-primary btn-editar-alimento" data-id="{{ alimento.id }}">
                 <i class="bi bi-pencil"></i> Editar
               </button>
@@ -68,7 +58,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  // Filtrado en vivo del catálogo de alimentos
   var buscador = document.getElementById("buscadorCatalogoAlimentos");
   var filas = Array.prototype.slice.call(document.querySelectorAll(".fila-alimento"));
 
@@ -88,6 +77,34 @@ document.addEventListener("DOMContentLoaded", function () {
   filtrarCatalogo();
 });
 </script>
+
+<div class="modal fade" id="detalleAlimentoCatalogoModal" tabindex="-1" aria-labelledby="detalleAlimentoCatalogoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title mb-0" id="detalleAlimentoCatalogoLabel">Detalle de alimento</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="vstack gap-2 small">
+          <div class="d-flex justify-content-between"><span class="text-secondary">Nombre</span><strong id="detalleCatalogoNombre">-</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-secondary">Marca</span><strong id="detalleCatalogoMarca">-</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-secondary">Referencia</span><strong id="detalleCatalogoReferencia">-</strong></div>
+          <hr class="my-1">
+          <div class="d-flex justify-content-between"><span class="text-secondary">Kcal</span><strong id="detalleCatalogoKcal">-</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-secondary">Proteínas</span><strong id="detalleCatalogoProteinas">-</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-secondary">Carbohidratos</span><strong id="detalleCatalogoCarbohidratos">-</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-secondary">Azúcares</span><strong id="detalleCatalogoAzucares">-</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-secondary">Grasas</span><strong id="detalleCatalogoGrasas">-</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-secondary">Saturadas</span><strong id="detalleCatalogoSaturadas">-</strong></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="agregarAlimentoModal" tabindex="-1" aria-labelledby="agregarAlimentoLabel" aria-hidden="true">
   <div class="modal-dialog modal-md modal-dialog-scrollable">
@@ -264,6 +281,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.textContent = value;
+    }
+  }
+
+  var detalleCatalogoEl = document.getElementById("detalleAlimentoCatalogoModal");
+  var detalleCatalogoModal = (detalleCatalogoEl && window.bootstrap) ? new bootstrap.Modal(detalleCatalogoEl) : null;
+
+  document.querySelectorAll('.btn-ver-detalle-alimento').forEach(function(boton) {
+    boton.addEventListener('click', function() {
+      var fila = this.closest('.fila-alimento');
+      if (!fila || !detalleCatalogoModal) {
+        return;
+      }
+      setText('detalleCatalogoNombre', fila.dataset.nombre || '-');
+      setText('detalleCatalogoMarca', fila.dataset.marca || '-');
+      setText('detalleCatalogoReferencia', (fila.dataset.cantidadReferencia || '0') + ' ' + (fila.dataset.unidad || ''));
+      setText('detalleCatalogoKcal', fila.dataset.kcal || '0');
+      setText('detalleCatalogoProteinas', (fila.dataset.proteinas || '0') + ' g');
+      setText('detalleCatalogoCarbohidratos', (fila.dataset.carbohidratos || '0') + ' g');
+      setText('detalleCatalogoAzucares', (fila.dataset.azucares || '0') + ' g');
+      setText('detalleCatalogoGrasas', (fila.dataset.grasas || '0') + ' g');
+      setText('detalleCatalogoSaturadas', (fila.dataset.saturadas || '0') + ' g');
+      detalleCatalogoModal.show();
+    });
+  });
+
   document.querySelectorAll('.btn-editar-alimento').forEach(function(boton) {
     boton.addEventListener('click', function() {
       const id = this.getAttribute('data-id');

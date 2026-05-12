@@ -43,7 +43,6 @@ def _build_calendar_context(request, historial_comidas, datos_perfil):
     prev_year = year if month > 1 else year - 1
     next_month = month + 1 if month < 12 else 1
     next_year = year if month < 12 else year + 1
-    # Buscar todas las comidas del día seleccionado
     seleccion_tiene_datos = False
     comidas_dia = []
     for c in historial_comidas:
@@ -51,8 +50,6 @@ def _build_calendar_context(request, historial_comidas, datos_perfil):
             comidas_dia.append(c)
     if comidas_dia:
         seleccion_tiene_datos = True
-        # datos_seleccionados: resumen del día + lista de comidas
-        # Sumar totales del día
         totales = {"kcal": 0, "proteinas": 0, "carbohidratos": 0, "azucares": 0, "grasas": 0, "saturadas": 0}
         for comida in comidas_dia:
             for item in comida.get("items", []):
@@ -99,7 +96,6 @@ def eliminar_alimento(request, id):
     return redirect("alimentos")
 
 from .forms import AlimentoForm
-from django.shortcuts import get_object_or_404
 
 @login_required
 @require_POST
@@ -173,6 +169,7 @@ def superuser_required(view_func):
     return wrapper
 
 import calendar
+import json
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 
@@ -301,7 +298,7 @@ def _calcular_macros_objetivo(calorias, objetivo):
 def inicio(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
-    return redirect("acceso")
+    return render(request, "landing.html")
 
 
 def _obtener_url_segura_siguiente(request):
@@ -684,9 +681,17 @@ def dashboard(request):
                 "etiqueta_comida": comida.get_tipo_comida_display(),
                 "items": items,
                 "fecha_comida": comida.fecha_comida.isoformat(),
-                # "creado_en" eliminado porque ya no existe
                 "totales": {k: round(v, 2) for k, v in totales_comida.items()},
                 "indice_historial": comida.id,
+                "payload_json": json.dumps(
+                    {
+                        "nombre": comida.get_tipo_comida_display(),
+                        "items": items,
+                        "totales": {k: round(v, 2) for k, v in totales_comida.items()},
+                        "indice_historial": comida.id,
+                    },
+                    ensure_ascii=False,
+                ),
             }
         )
     today_key = date.today().isoformat()
@@ -702,7 +707,6 @@ def dashboard(request):
             totales["grasas"] += item["grasas"]
             totales["saturadas"] += item["saturadas"]
 
-    # Normalize float sums to avoid artifacts like 384.20000000000005.
     totales["kcal"] = round(totales["kcal"], 2)
     totales["proteinas"] = round(totales["proteinas"], 2)
     totales["carbohidratos"] = round(totales["carbohidratos"], 2)
@@ -1201,9 +1205,7 @@ def alimentos(request):
         azucares = float(request.POST.get("azucar_ref_form", "") or 0)
         saturadas = float(request.POST.get("gras_sat_ref_form", "") or 0)
         
-        # Validar que el nombre no esté vacío
         if nombre:
-            # Crear el alimento con los nombres correctos de campos
             Alimento.objects.create(
                 usuario=request.user,
                 nombre=nombre,
@@ -1263,7 +1265,6 @@ def estadisticas(request):
                 "etiqueta_comida": comida.get_tipo_comida_display(),
                 "items": items,
                 "fecha_comida": comida.fecha_comida.isoformat(),
-                # "creado_en" eliminado porque ya no existe
                 "totales": {k: round(v, 2) for k, v in totales.items()},
                 "indice_historial": comida.id,
             }
@@ -1303,7 +1304,6 @@ def admin_incidencias(request):
         messages.warning(request, "No tienes permisos de administrador.")
         return redirect("dashboard")
     
-    # Manejar eliminación de incidencia
     if request.method == "POST":
         incidencia_id = request.POST.get("incidencia_id")
         accion = request.POST.get("accion", "actualizar")
@@ -1320,7 +1320,6 @@ def admin_incidencias(request):
             messages.error(request, "La incidencia seleccionada no es válida.")
         return redirect("admin_incidencias")
     
-    # GET: Mostrar incidencias
     incidencias = (
         Incidencia.objects.select_related("mensaje", "reportero")
         .filter(mensaje__isnull=True)
@@ -1337,13 +1336,11 @@ def admin_chat(request):
         messages.warning(request, "No tienes permisos de administrador.")
         return redirect("dashboard")
     
-    # Manejar eliminación de mensaje
     if request.method == "POST":
         mensaje_id = request.POST.get("mensaje_id")
         
         try:
             mensaje = MensajeChat.objects.get(id=int(mensaje_id))
-            # Eliminamos primero los reportes asociados para descartar su razon.
             Incidencia.objects.filter(mensaje=mensaje).delete()
             mensaje.delete()
             return redirect("admin_chat")
@@ -1354,10 +1351,7 @@ def admin_chat(request):
             messages.error(request, "El mensaje seleccionado no es valido.")
             return redirect("admin_chat")
     
-    # GET: Mostrar mensajes con incidencias
     sala_slug = request.GET.get("sala", "")
-    
-    # Traer mensajes que tienen incidencias asociadas
     incidencias = Incidencia.objects.select_related(
         "mensaje", "reportero", "mensaje__sala"
     ).filter(

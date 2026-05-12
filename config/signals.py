@@ -6,16 +6,10 @@ from config.models import Perfil
 
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
-    """
-    Crear un Perfil cuando se crea un nuevo Usuario.
-    """
     if created:
         Perfil.objects.create(usuario=instance)
 
 
 @receiver(post_save, sender=User)
 def guardar_perfil_usuario(sender, instance, **kwargs):
-    """
-    Guardar el Perfil cuando se actualiza el Usuario.
-    """
     instance.perfil.save()
