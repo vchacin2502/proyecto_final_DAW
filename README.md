@@ -16,6 +16,28 @@ La aplicación ayuda a organizar la alimentación de forma práctica. Cada usuar
 - Chat interno para compartir dudas o comentarios con otros usuarios.
 - Panel de administración para gestionar usuarios, incidencias y contenido de la plataforma.
 
+## Tecnologías
+
+### Backend
+
+- Python
+- Django
+- SQLite
+
+### Frontend
+
+- HTML
+- CSS
+- Bootstrap
+- JavaScript
+
+### Despliegue
+
+- Docker
+- Nginx
+- Let's Encrypt
+- Freemyip
+
 ## Cómo funciona
 
 1. El usuario accede a su cuenta o se registra.
