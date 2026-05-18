@@ -36,7 +36,7 @@
       </thead>
       <tbody id="tablaAlimentosBody">
         {% for alimento in alimentos %}
-          <tr class="fila-alimento" data-busqueda="{{ alimento.nombre|lower }} {{ alimento.marca|default:''|lower }}" data-nombre="{{ alimento.nombre }}" data-marca="{{ alimento.marca|default:'-' }}" data-unidad="{{ alimento.unidad }}" data-cantidad-referencia="{{ alimento.cantidad_referencia }}" data-kcal="{{ alimento.kcal }}" data-proteinas="{{ alimento.proteinas }}" data-carbohidratos="{{ alimento.carbohidratos }}" data-azucares="{{ alimento.azucares }}" data-grasas="{{ alimento.grasas }}" data-saturadas="{{ alimento.saturadas }}">
+          <tr class="fila-alimento" data-id="{{ alimento.id }}" data-busqueda="{{ alimento.nombre|lower }} {{ alimento.marca|default:''|lower }}" data-nombre="{{ alimento.nombre }}" data-marca="{{ alimento.marca|default:'-' }}" data-unidad="{{ alimento.unidad }}" data-cantidad-referencia="{{ alimento.cantidad_referencia }}" data-kcal="{{ alimento.kcal }}" data-proteinas="{{ alimento.proteinas }}" data-carbohidratos="{{ alimento.carbohidratos }}" data-azucares="{{ alimento.azucares }}" data-grasas="{{ alimento.grasas }}" data-saturadas="{{ alimento.saturadas }}">
             <td>{{ alimento.nombre }}</td>
             <td>{{ alimento.marca|default:'-' }}</td>
             <td class="text-end acciones-alimento">
@@ -334,6 +334,54 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   });
+
+  // Enviar edición vía AJAX para actualizar la fila sin recargar
+  var formEditar = document.getElementById('formEditarAlimento');
+  if (formEditar) {
+    formEditar.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var action = formEditar.action;
+      var formData = new FormData(formEditar);
+      fetch(action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+      }).then(function (res) {
+        if (!res.ok) throw res;
+        return res.json();
+      }).then(function (data) {
+        var row = document.querySelector('.fila-alimento[data-id="' + data.id + '"]');
+        if (row) {
+          row.dataset.nombre = data.nombre;
+          row.dataset.marca = data.marca || '-';
+          row.dataset.unidad = data.unidad;
+          row.dataset.cantidadReference = data.cantidad_referencia;
+          row.dataset.kcal = data.kcal;
+          row.dataset.proteinas = data.proteinas;
+          row.dataset.carbohidratos = data.carbohidratos;
+          row.dataset.azucares = data.azucares;
+          row.dataset.grasas = data.grasas;
+          row.dataset.saturadas = data.saturadas;
+          row.querySelector('td:first-child').textContent = data.nombre;
+          row.querySelector('td:nth-child(2)').textContent = data.marca || '-';
+        }
+        var modalEl = document.getElementById('editarAlimentoModal');
+        var modalObj = bootstrap.Modal.getInstance(modalEl);
+        if (modalObj) modalObj.hide();
+      }).catch(function (err) {
+        if (err.json) {
+          err.json().then(function (e) {
+            alert('Errores: ' + (e.errors || JSON.stringify(e)));
+          }).catch(function () { alert('Error al guardar el alimento.'); });
+        } else {
+          alert('Error al guardar el alimento.');
+        }
+      });
+    });
+  }
 });
 </script>
 {% endblock %}

@@ -119,11 +119,32 @@ def editar_alimento(request, id):
     if request.method == "POST":
         form = AlimentoForm(request.POST, instance=alimento)
         if form.is_valid():
-            form.save()
+            alimento = form.save()
             messages.success(request, "Alimento actualizado correctamente.")
+            # Respuesta para peticiones AJAX (fetch desde el modal)
+            is_ajax = (
+                request.headers.get('x-requested-with') == 'XMLHttpRequest'
+                or request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+            )
+            if is_ajax:
+                return JsonResponse({
+                    'id': alimento.id,
+                    'nombre': alimento.nombre,
+                    'marca': alimento.marca,
+                    'unidad': alimento.unidad,
+                    'cantidad_referencia': alimento.cantidad_referencia,
+                    'kcal': alimento.kcal,
+                    'proteinas': alimento.proteinas,
+                    'carbohidratos': alimento.carbohidratos,
+                    'azucares': alimento.azucares,
+                    'grasas': alimento.grasas,
+                    'saturadas': alimento.saturadas,
+                })
             return redirect("alimentos")
         else:
             messages.error(request, "Por favor, corrige los errores del formulario.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = AlimentoForm(instance=alimento)
     return render(request, "paginas/alimento_form.html", {"form": form, "alimento": alimento})
@@ -1029,7 +1050,7 @@ def editar_comida(request, indice_comida):
         for indx, item_existente in enumerate(items_existentes):
             if not request.POST.get(f"existing_keep_{indx}"):
                 continue
-            cantidad_raw = request.POST.get(f"existing_qty_{indx}", "").strip()
+            cantidad_raw = request.POST.get(f"existing_qty_{indx}", "").strip().replace(",", ".")
             unidad = request.POST.get(f"existing_unit_{indx}", item_existente.get("unidad", "g"))
             if not cantidad_raw:
                 errores.append(f"Debes indicar una cantidad para {item_existente['nombre']}.")
@@ -1046,7 +1067,7 @@ def editar_comida(request, indice_comida):
 
         for alimento in catalogo:
             if request.POST.get(f"use_food_{alimento['id']}"):
-                cantidad_raw = request.POST.get(f"qty_food_{alimento['id']}", "").strip()
+                cantidad_raw = request.POST.get(f"qty_food_{alimento['id']}", "").strip().replace(",", ".")
                 unidad = request.POST.get(f"unit_food_{alimento['id']}", alimento["unidad"])
                 if not cantidad_raw:
                     errores.append(f"Debes indicar una cantidad para {alimento['nombre']}.")
@@ -1361,7 +1382,7 @@ def admin_chat(request):
     if sala_slug:
         incidencias = incidencias.filter(mensaje__sala__slug=sala_slug)
     
-    salas = SalaChat.objects.all().order_by("nombre")
+    salas = _asegurar_salas_chat()
     
     return render(request, "paginas/admin_chat.html", {
         "incidencias": incidencias,
