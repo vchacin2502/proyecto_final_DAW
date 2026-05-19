@@ -78,3 +78,7 @@ Si es la primera vez que entras, lo normal es seguir este orden:
 - Añadir algunos alimentos al catálogo.
 - Registrar una comida con esos alimentos.
 - Revisar el dashboard para ver el resumen del día.
+
+### Enlace a la aplicación web
+
+https://cafitdaw.freemyip.com/
